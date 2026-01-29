@@ -362,7 +362,7 @@
 
         function renderMateri(container) {
             container.innerHTML = `
-                <div class="bg-black rounded-2xl aspect-video w-full mb-6 border-4 border-white shadow-lg overflow-hidden"><iframe class="w-full h-full" src="https://youtu.be/p7nKQH8sAfw?si=1gZvxZXZNQkbRraA" frameborder="0" allowfullscreen></iframe></div>
+                <div class="bg-black rounded-2xl aspect-video w-full mb-6 border-4 border-white shadow-lg overflow-hidden"><iframe class="w-full h-full" src="<iframe width="560" height="315" src="https://www.youtube.com/embed/p7nKQH8sAfw?si=1gZvxZXZNQkbRraA&amp;start=74" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>" frameborder="0" allowfullscreen></iframe></div>
                 <h3 class="font-bold text-blue-800 mb-2">Langkah Perawatan:</h3>
                 <div class="space-y-2 pb-8">${LEVEL_2_STEPS.map((s,i) => `<div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-blue-50"><div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600 text-[10px]">${i+1}</div><span class="text-sm font-medium text-gray-600">${s.label}</span></div>`).join('')}</div>`;
             updateAvatar('happy', 'Tonton videonya baik-baik ya!');
@@ -559,5 +559,6 @@
 </body>
 
 </html>
+
 
 
