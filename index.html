@@ -15,7 +15,6 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* CSS KHUSUS */
         body {
             font-family: 'Varela Round', sans-serif;
             overscroll-behavior: none; 
@@ -33,13 +32,12 @@
         .animate-spin-slow { animation: spin-slow 10s linear infinite; }
         .animate-shake { animation: shake 0.2s ease-in-out 3; }
 
-        /* Drag & Drop Styles */
+        /* Gaya Drag & Drop */
         .draggable-item { cursor: grab; touch-action: none; user-select: none; will-change: transform; }
         .draggable-item:active { cursor: grabbing; transform: scale(1.1); z-index: 100; }
         .drop-zone-active { border-color: #3b82f6 !important; background-color: #eff6ff !important; transform: scale(1.02); }
         #drop-zone { touch-action: none; transition: all 0.3s ease; }
 
-        #avatar-container { pointer-events: auto; }
         .dragging-clone { position: fixed; pointer-events: none; z-index: 9999; opacity: 0.9; transform: scale(1.1); will-change: left, top; }
         
         .avatar-content { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -57,9 +55,9 @@
 </head>
 <body class="bg-blue-50 text-gray-800 h-screen w-screen overflow-hidden flex justify-center bg-gradient-to-br from-blue-50 to-white">
 
-    <!-- Container Utama -->
-    <div id="app" class="relative w-full max-w-md h-full bg-white/60 shadow-2xl flex flex-col border-x border-white overflow-hidden">
-        <!-- Konten diisi JS -->
+    <!-- Kontainer Utama -->
+    <div id="app" class="relative w-full max-md h-full bg-white/60 shadow-2xl flex flex-col border-x border-white overflow-hidden">
+        <!-- Konten disuntikkan oleh JS -->
     </div>
 
     <!-- Avatar Pendamping -->
@@ -77,19 +75,151 @@
         </div>
     </div>
 
-    <!-- Tombol Audio Mute (Pojok Kanan Atas) -->
-    <button id="mute-btn" onclick="toggleMute()" class="fixed top-20 right-4 z-50 bg-white/80 p-2 rounded-full shadow border border-gray-200 text-gray-500 hidden">
-        <i data-lucide="volume-2" id="mute-icon"></i>
-    </button>
+    <!-- Tombol Navigasi Kanan Atas -->
+    <div class="fixed top-20 right-4 z-50 flex flex-col gap-2 items-center">
+        <!-- Tombol Panduan -->
+        <button id="guide-btn" onclick="openPanduan()" class="bg-white/90 p-2 rounded-full shadow-md border border-blue-100 text-blue-500 hover:bg-white active:scale-95 transition-all hidden">
+            <i data-lucide="book-open" class="w-6 h-6"></i>
+        </button>
+        <!-- Tombol Audio Mute -->
+        <button id="mute-btn" onclick="toggleMute()" class="bg-white/90 p-2 rounded-full shadow-md border border-gray-200 text-gray-500 hover:bg-white active:scale-95 transition-all hidden">
+            <i data-lucide="volume-2" id="mute-icon" class="w-6 h-6"></i>
+        </button>
+    </div>
 
-    <!-- VICTORY MODAL OVERLAY -->
+    <!-- MODAL BUKU PANDUAN -->
+    <div id="guide-modal" class="hidden fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl animate-pop-in overflow-hidden border-4 border-blue-100">
+            <!-- Header Modal -->
+            <div class="p-5 border-b border-blue-50 flex justify-between items-center bg-blue-50/50">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="book-open" class="text-blue-600"></i>
+                    <h2 class="font-black text-blue-800 text-lg uppercase tracking-tight leading-tight">Buku Panduan</h2>
+                </div>
+                <button onclick="closePanduan()" class="bg-white p-1 rounded-full text-gray-400 hover:text-red-500 transition-colors shadow-sm"><i data-lucide="x"></i></button>
+            </div>
+            <!-- Isi Modal -->
+            <div class="p-6 overflow-y-auto no-scrollbar text-sm leading-relaxed text-gray-700">
+                <div class="text-center mb-6">
+                    <h1 class="text-xl font-black text-gray-900 leading-tight">BUKU PENGGUNAAN APLIKASI</h1>
+                    <p class="text-blue-600 font-bold mt-1">Gamifikasi Pembelajaran Self Care (Perawatan Luka)</p>
+                    <p class="text-xs text-gray-400 italic">Untuk Orang Tua Murid dan Guru/Terapis</p>
+                </div>
+
+                <section class="mb-6">
+                    <h3 class="font-black text-blue-700 uppercase mb-2 border-b-2 border-blue-100 pb-1">A. Pendahuluan</h3>
+                    <p>Aplikasi Gamifikasi Pembelajaran Self Care (Perawatan Luka) dikembangkan untuk membantu peserta didik disabilitas intelektual ringan dalam mempelajari keterampilan perawatan luka secara mandiri, aman, dan menyenangkan. Aplikasi ini menggabungkan elemen gamifikasi (poin, level, progres, dan reward) dengan model pembelajaran kontekstual, sehingga materi mudah dipahami dan dapat diterapkan dalam kehidupan sehari-hari.</p>
+                </section>
+
+                <section class="mb-6">
+                    <h3 class="font-black text-blue-700 uppercase mb-2 border-b-2 border-blue-100 pb-1">B. Sasaran Pengguna</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Peserta didik disabilitas intelektual ringan</li>
+                        <li>Orang tua/wali murid sebagai pendamping di rumah</li>
+                        <li>Guru/Terapis sebagai fasilitator pembelajaran di sekolah atau pusat terapi</li>
+                    </ul>
+                </section>
+
+                <section class="mb-6">
+                    <h3 class="font-black text-blue-700 uppercase mb-2 border-b-2 border-blue-100 pb-1">C. Tujuan Penggunaan Aplikasi</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Membantu anak memahami langkah-langkah dasar perawatan luka</li>
+                        <li>Meningkatkan kemandirian anak dalam self care</li>
+                        <li>Meningkatkan motivasi belajar melalui permainan edukatif</li>
+                        <li>Menyediakan media pembelajaran yang kontekstual dan interaktif</li>
+                    </ul>
+                </section>
+
+                <section class="mb-6">
+                    <h3 class="font-black text-blue-700 uppercase mb-2 border-b-2 border-blue-100 pb-1">D. Perangkat dan Akses</h3>
+                    <p class="mb-2">Aplikasi dapat diakses melalui web application menggunakan Komputer/Laptop, Tablet, atau Smartphone.</p>
+                    <p class="font-bold">Kebutuhan:</p>
+                    <ul class="list-disc pl-5">
+                        <li>Koneksi internet</li>
+                        <li>Browser (Chrome, Edge, atau Firefox)</li>
+                    </ul>
+                </section>
+
+                <section class="mb-6">
+                    <h3 class="font-black text-blue-700 uppercase mb-2 border-b-2 border-blue-100 pb-1">E. Struktur dan Fitur Aplikasi</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="font-bold text-gray-800">1. Halaman Awal</p>
+                            <p class="text-xs text-gray-500 pl-4">Kolom Nama Pengguna & Tombol Play.</p>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-800">2. Menu Utama</p>
+                            <p class="text-xs text-gray-500 pl-4">Materi, Level 1–4, Score & Progress.</p>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-800">3. Menu Materi (Modeling)</p>
+                            <p class="text-xs text-gray-500 pl-4">Video pemodelan & penjelasan alat: air bersih, antiseptik, kasa, plester.</p>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-800">4. Menu Level</p>
+                            <ul class="text-xs text-gray-500 pl-8 list-circle list-inside">
+                                <li>L1: Memilih Alat Perawatan Luka</li>
+                                <li>L2: Mengurutkan Langkah</li>
+                                <li>L3: Menjawab Pertanyaan Sederhana</li>
+                                <li>L4: Praktik Virtual (Drag & Drop)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-800">5. Refleksi dan Emosi</p>
+                            <p class="text-xs text-gray-500 pl-4">Anak memilih emotikon sesuai perasaan.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="mb-6">
+                    <h3 class="font-black text-green-700 uppercase mb-2 border-b-2 border-green-100 pb-1">F. Panduan untuk Orang Tua</h3>
+                    <p class="font-bold text-gray-800">Peran Orang Tua:</p>
+                    <p class="mb-2 italic">Mendampingi anak saat pertama kali menggunakan, memberi arahan tanpa mengambil alih, serta memberi pujian.</p>
+                    <p class="font-bold text-gray-800">Langkah Pendampingan:</p>
+                    <ol class="list-decimal pl-5 space-y-1">
+                        <li>Pastikan anak nyaman dan fokus.</li>
+                        <li>Dampingi mengisi nama.</li>
+                        <li>Ajak menonton video hingga selesai.</li>
+                        <li>Biarkan anak mencoba menyelesaikan level.</li>
+                        <li>Diskusikan bersama setelah selesai bermain.</li>
+                    </ol>
+                </section>
+
+                <section class="mb-6">
+                    <h3 class="font-black text-orange-700 uppercase mb-2 border-b-2 border-orange-100 pb-1">G. Panduan untuk Guru/Terapis</h3>
+                    <p class="font-bold text-gray-800 italic mb-2">Fasilitator dan pembimbing pembelajaran.</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Gunakan menu Materi sebagai apersepsi.</li>
+                        <li>Lakukan diskusi singkat setelah setiap level.</li>
+                        <li>Catat progres melalui fitur skor.</li>
+                        <li>Kombinasikan dengan praktik langsung menggunakan alat tiruan.</li>
+                    </ul>
+                </section>
+
+                <section class="mb-6">
+                    <h3 class="font-black text-red-700 uppercase mb-2 border-b-2 border-red-100 pb-1">H. Prinsip Keamanan</h3>
+                    <p class="p-3 bg-red-50 rounded-xl border border-red-100 text-xs italic">Aplikasi tidak menggantikan perawatan medis profesional. Anak tetap harus didampingi orang dewasa. Materi difokuskan pada luka ringan.</p>
+                </section>
+
+                <section class="text-center mt-8 pt-4 border-t border-gray-100">
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Merawat Luka - Si Penolong Cilik © 2026</p>
+                </section>
+            </div>
+            <!-- Footer Modal -->
+            <div class="p-4 bg-gray-50 border-t border-gray-100">
+                <button onclick="closePanduan()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-2xl shadow-lg active:scale-95 transition-all">MENGERTI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KEMENANGAN -->
     <div id="victory-modal" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-[3rem] p-8 w-full max-w-sm text-center shadow-2xl border-4 border-yellow-200 relative overflow-hidden animate-pop-in">
             <div class="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
                  <svg class="w-[500px] h-[500px] text-yellow-500 animate-spin-slow" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v2a1 1 0 002 0V5zm0 8a1 1 0 10-2 0v2a1 1 0 002 0v-2zM4 10a1 1 0 001 1h2a1 1 0 100-2H5a1 1 0 00-1 1zm10 0a1 1 0 001 1h2a1 1 0 100-2h-2a1 1 0 00-1 1z" clip-rule="evenodd" /></svg>
             </div>
             <div class="relative z-10">
-                <h2 class="text-3xl font-black text-yellow-500 mb-2 drop-shadow-sm uppercase">GOOD JOB!</h2>
+                <h2 class="text-3xl font-black text-yellow-500 mb-2 drop-shadow-sm uppercase">HEBAT!</h2>
                 <h3 id="victory-name" class="text-xl font-bold text-blue-600 mb-6 capitalize">Nama Murid</h3>
                 <div class="flex justify-center mb-6">
                     <div class="w-32 h-32 bg-gradient-to-br from-yellow-200 to-yellow-400 rounded-full flex items-center justify-center border-4 border-white shadow-lg animate-bounce-slow">
@@ -111,14 +241,14 @@
         </div>
     </div>
 
-    <!-- AUDIO ELEMENTS -->
+    <!-- ELEMEN AUDIO -->
     <audio id="sfx-correct" src="audio/correct.mp3"></audio>
     <audio id="sfx-wrong" src="audio/wrong.mp3"></audio>
     <audio id="sfx-victory" src="audio/victory.mp3"></audio>
     <audio id="sfx-click" src="audio/click.mp3"></audio>
 
     <script>
-        // --- 1. DATA APLIKASI ---
+        // --- DATA ---
         const STATE = {
             screen: 'intro', name: '', score: 0, completedLevels: [], currentLevel: 1,
             selectedTools: [], orderStep: [], quizIndex: 0, woundState: 0, isAvatarVisible: true,
@@ -147,7 +277,7 @@
             { q: "Mengapa luka harus dibersihkan?", opts: [{ t: "Biar Kuman Mati", i: "sparkles", c: true }, { t: "Biar Sakit", i: "frown", c: false }] }
         ];
 
-        // --- AUDIO SYSTEM ---
+        // --- AUDIO ---
         const sfx = {
             correct: document.getElementById('sfx-correct'),
             wrong: document.getElementById('sfx-wrong'),
@@ -158,26 +288,34 @@
         function playSfx(type) {
             if(STATE.isMuted || !sfx[type]) return;
             sfx[type].currentTime = 0;
-            sfx[type].play().catch(e => console.log("Audio play error:", e));
+            sfx[type].play().catch(() => {});
         }
 
-        // TEXT-TO-SPEECH (TTS) - Suara Perempuan (Google Bahasa Indonesia)
+        // --- SISTEM SUARA (TTS) ---
         function speak(text) {
             if(STATE.isMuted) return;
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // Stop suara sebelumnya
+                window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'id-ID'; // Bahasa Indonesia
-                utterance.rate = 0.9; // Agak lambat agar jelas untuk anak
-                utterance.pitch = 1.1; // Sedikit tinggi agar terdengar ceria (mirip perempuan/anak)
-                
-                // Coba pilih suara perempuan jika ada
                 const voices = window.speechSynthesis.getVoices();
-                const femaleVoice = voices.find(v => v.lang === 'id-ID' && (v.name.includes('Google') || v.name.includes('Female')));
-                if(femaleVoice) utterance.voice = femaleVoice;
-
+                let selectedVoice = voices.find(v => 
+                    v.lang.includes('id') && 
+                    (v.name.toLowerCase().includes('gadis') || v.name.toLowerCase().includes('female'))
+                );
+                if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('id') && v.name.toLowerCase().includes('google'));
+                if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('id'));
+                if (selectedVoice) utterance.voice = selectedVoice;
+                utterance.lang = 'id-ID';
+                utterance.rate = 1.0; 
+                utterance.pitch = 1.4; 
                 window.speechSynthesis.speak(utterance);
             }
+        }
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices();
+            };
         }
 
         function toggleMute() {
@@ -192,7 +330,28 @@
             lucide.createIcons();
         }
 
-        // --- RENDER ENGINE ---
+        // --- PANDUAN MODAL LOGIC ---
+        function openPanduan() {
+            playSfx('click');
+            document.getElementById('guide-modal').classList.remove('hidden');
+        }
+
+        function closePanduan() {
+            playSfx('click');
+            document.getElementById('guide-modal').classList.add('hidden');
+        }
+
+        // --- GLOBAL ERROR HANDLERS ---
+        window.handleImageError = (el) => {
+            el.style.display = 'none';
+            if (el.nextElementSibling) el.nextElementSibling.style.display = 'block';
+        };
+
+        window.handleWoundError = (el) => {
+            el.parentElement.innerHTML = '<div class="text-2xl font-black text-blue-300 uppercase text-center">Gambar Luka</div>';
+        };
+
+        // --- RENDER ---
         const app = document.getElementById('app');
         const avatarContainer = document.getElementById('avatar-container');
         const victoryModal = document.getElementById('victory-modal');
@@ -204,10 +363,13 @@
             app.innerHTML = '';
             
             if (STATE.screen === 'intro') {
+                document.getElementById('mute-btn').classList.add('hidden');
+                document.getElementById('guide-btn').classList.add('hidden');
                 renderIntro();
             } else {
                 renderMonitoringHeader();
-                document.getElementById('mute-btn').classList.remove('hidden'); // Show mute btn after intro
+                document.getElementById('mute-btn').classList.remove('hidden');
+                document.getElementById('guide-btn').classList.remove('hidden');
                 
                 const wrapper = document.createElement('div');
                 wrapper.className = "flex-1 overflow-y-auto no-scrollbar w-full h-full pt-20"; 
@@ -229,7 +391,6 @@
             lucide.createIcons();
         }
 
-        // --- AVATAR SYSTEM ---
         function updateAvatar(mood, text) {
             if (text) {
                 avatarText.innerText = text;
@@ -237,22 +398,20 @@
                 avatarBubble.classList.remove('animate-pop-in');
                 void avatarBubble.offsetWidth; 
                 avatarBubble.classList.add('animate-pop-in');
-                
-                // Speak Text Automatically
                 speak(text);
             } else {
                 avatarBubble.classList.add('hidden');
             }
         }
 
-        window.toggleAvatar = () => {
+        function toggleAvatar() {
             STATE.isAvatarVisible = !STATE.isAvatarVisible;
             if (STATE.isAvatarVisible) {
                 avatarContainer.classList.remove('avatar-hidden');
             } else {
                 avatarContainer.classList.add('avatar-hidden');
             }
-        };
+        }
 
         function renderMonitoringHeader() {
             const progress = (STATE.completedLevels.length / 4) * 100;
@@ -270,27 +429,23 @@
             app.appendChild(el);
         }
 
-        // --- 3. VICTORY SYSTEM ---
         function showVictory() {
             victoryName.innerText = STATE.name || "Teman";
             victoryModal.classList.remove('hidden');
             lucide.createIcons();
-            playSfx('victory'); // Mainkan suara tepuk tangan
-            updateAvatar('excited', 'HORE! KAMU HEBAT!'); // Suara instruksi "Hore"
+            playSfx('victory');
+            updateAvatar('excited', 'HORE! KAMU HEBAT!');
             if (!STATE.isAvatarVisible) toggleAvatar();
         }
 
         function closeVictory() {
             playSfx('click');
             victoryModal.classList.add('hidden');
-            if(STATE.currentLevel === 4) {
-                navigate('reflection');
-            } else {
-                navigate('level_select');
-            }
+            if(STATE.currentLevel === 4) navigate('reflection');
+            else navigate('level_select');
         }
 
-        // --- 4. SCREENS ---
+        // --- LAYAR-LAYAR ---
         function renderIntro() {
             const el = document.createElement('div');
             el.className = "flex flex-col items-center justify-center h-full p-6 text-center";
@@ -307,31 +462,22 @@
 
             const input = document.getElementById('inputName');
             const btn = document.getElementById('btnStart');
-            const checkInput = () => {
-                if(input.value.trim().length > 0) { 
-                    btn.disabled = false; 
-                    btn.classList.remove('opacity-50', 'cursor-not-allowed'); 
-                } else { 
-                    btn.disabled = true; 
-                    btn.classList.add('opacity-50', 'cursor-not-allowed'); 
+            input.addEventListener('input', () => {
+                if(input.value.trim().length > 0) {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    btn.disabled = true;
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
                 }
-            };
-            input.addEventListener('input', checkInput);
+            });
             
-            btn.onclick = () => { 
-                if(input.value.trim().length === 0) {
-                    input.classList.add('animate-shake');
-                    setTimeout(() => input.classList.remove('animate-shake'), 500);
-                    input.focus();
-                    updateAvatar('sad', 'Isi namamu dulu ya!');
-                    return;
-                }
+            btn.onclick = () => {
                 playSfx('click');
-                STATE.name = input.value; 
-                navigate('menu'); 
-                updateAvatar('happy', `Halo ${STATE.name}! Ayo belajar.`); 
+                STATE.name = input.value;
+                navigate('menu');
+                updateAvatar('happy', `Halo ${STATE.name}! Ayo belajar.`);
             };
-            // Initial greeting on load (user must interact first to hear audio policy, but we prepare it)
         }
 
         function renderMenu(container) {
@@ -361,103 +507,90 @@
         }
 
         function renderMateri(container) {
-    // Ganti URL di bawah ini dengan URL Embed video kamu
-    const youtubeUrl = "https://www.youtube.com/embed/p7nKQH8sAfw?si=V3ZySJ5gJ51Obiu2" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>"; 
-
-    container.innerHTML = `
-        <div class="bg-black rounded-2xl aspect-video w-full mb-6 border-4 border-white shadow-lg overflow-hidden">
-            <iframe 
-                class="w-full h-full" 
-                src="${youtubeUrl}" 
-                title="YouTube video player" 
-                frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                referrerpolicy="strict-origin-when-cross-origin" 
-                allowfullscreen>
-            </iframe>
-        </div>
-        <h3 class="font-bold text-blue-800 mb-2">Langkah Perawatan:</h3>
-        <div class="space-y-2 pb-8">
-            ${LEVEL_2_STEPS.map((s,i) => `
-                <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-blue-50">
-                    <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600 text-[10px]">${i+1}</div>
-                    <span class="text-sm font-medium text-gray-600">${s.label}</span>
+            const embedUrl = "https://www.youtube.com/embed/p7nKQH8sAfw?si=XkZqDBkOrX9K_gyY";
+            container.innerHTML = `
+                <div class="bg-black rounded-2xl aspect-video w-full mb-6 border-4 border-white shadow-lg overflow-hidden">
+                    <iframe class="w-full h-full" src="${embedUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
-            `).join('')}
-        </div>`;
-    updateAvatar('happy', 'Tonton videonya baik-baik ya!');
-}
+                <h3 class="font-bold text-blue-800 mb-2">Langkah Perawatan:</h3>
+                <div class="space-y-2 pb-8">
+                    ${LEVEL_2_STEPS.map((s,i) => `
+                        <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-blue-50">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600 text-[12px]">${i+1}</div>
+                            <span class="text-sm font-medium text-gray-600">${s.label}</span>
+                        </div>
+                    `).join('')}
+                </div>`;
+            updateAvatar('happy', 'Tonton videonya baik-baik ya!');
         }
 
-        // --- GAME LOGIC ---
         function startLevel(lvl) {
             playSfx('click');
-            STATE.currentLevel = lvl; STATE.selectedTools = []; STATE.orderStep = []; STATE.quizIndex = 0; STATE.woundState = 0; STATE.screen = 'game'; render();
+            STATE.currentLevel = lvl; 
+            STATE.selectedTools = []; 
+            STATE.orderStep = []; 
+            STATE.quizIndex = 0; 
+            STATE.woundState = 0; 
+            STATE.screen = 'game'; 
+            render();
         }
 
         function renderGame(container) {
             let header = `<div class="flex justify-center mb-4"><div class="bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-bold tracking-wider shadow-md">LEVEL ${STATE.currentLevel}</div></div>`;
-            const onError = `this.style.display='none'; this.nextElementSibling.style.display='block';`;
 
             if (STATE.currentLevel === 1) {
-                updateAvatar('excited', 'Pilih alat-alat P3K yang benar!');
+                updateAvatar('excited', 'pilih alat alat p3k yang bener');
                 container.innerHTML = header + `
                     <div class="grid grid-cols-2 gap-3 mb-6">${LEVEL_1_TOOLS.map(t => { 
                         const isSel = STATE.selectedTools.includes(t.id); 
-                        return `<button onclick="toggleTool('${t.id}')" class="p-4 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all active:scale-95 ${isSel ? 'bg-green-50 border-green-500' : 'bg-white border-gray-100'}">
-                            <img src="${t.img}" class="w-12 h-12 object-contain" onerror="${onError}">
-                            <i data-lucide="${t.iconFallback}" class="w-12 h-12 text-gray-400 hidden"></i>
-                            <span class="text-xs font-bold ${isSel ? 'text-green-700' : 'text-gray-600'}">${t.name}</span>
+                        return `<button onclick="toggleTool('${t.id}')" class="p-4 rounded-3xl border-2 flex flex-col items-center gap-3 transition-all active:scale-95 ${isSel ? 'bg-green-50 border-green-500' : 'bg-white border-gray-100'}">
+                            <div class="w-20 h-20 flex items-center justify-center bg-gray-50 rounded-2xl p-1">
+                                <img src="${t.img}" class="w-full h-full object-contain" onerror="handleImageError(this)">
+                                <i data-lucide="${t.iconFallback}" class="w-12 h-12 text-gray-400 hidden"></i>
+                            </div>
+                            <span class="text-sm font-bold ${isSel ? 'text-green-700' : 'text-gray-600'}">${t.name}</span>
                         </button>`; 
                     }).join('')}</div>
-                    <button onclick="checkLevel1()" class="w-full bg-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg border-b-4 border-blue-600 active:translate-y-1 active:border-b-0">CEK JAWABAN</button>`;
+                    <button onclick="checkLevel1()" class="w-full bg-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg border-b-4 border-blue-600 active:translate-y-1 active:border-b-0 text-lg">CEK JAWABAN</button>`;
             } 
             else if (STATE.currentLevel === 2) {
                 updateAvatar('happy', 'Klik alat sesuai urutan yang benar!');
                 container.innerHTML = header + `
-                    <div class="flex gap-2 justify-center mb-6 overflow-x-auto py-2 no-scrollbar">${[0,1,2,3,4].map(i => `
-                        <div class="min-w-[60px] h-[70px] bg-blue-50 border-2 border-dashed border-blue-200 rounded-xl flex items-center justify-center overflow-hidden p-1">
-                            ${STATE.orderStep[i] ? `<img src="${STATE.orderStep[i].img}" class="w-full h-full object-contain animate-pop-in" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i data-lucide="${STATE.orderStep[i].iconFallback}" class="hidden w-6 h-6 text-blue-600"></i>` : `<span class="text-blue-200 font-bold">${i+1}</span>`}
+                    <div class="flex gap-2 justify-center mb-8 overflow-x-auto py-2 no-scrollbar">
+                        ${[0,1,2,3,4].map(i => `
+                        <div class="min-w-[85px] h-[105px] bg-blue-50 border-2 border-dashed border-blue-200 rounded-[1.5rem] flex items-center justify-center overflow-hidden p-2 shadow-inner">
+                            ${STATE.orderStep[i] ? `<img src="${STATE.orderStep[i].img}" class="w-full h-full object-contain animate-pop-in" onerror="handleImageError(this)"><i data-lucide="${STATE.orderStep[i].iconFallback}" class="hidden w-10 h-10 text-blue-600"></i>` : `<span class="text-blue-200 font-black text-2xl">${i+1}</span>`}
                         </div>`).join('')}
                     </div>
-                    <div class="grid grid-cols-2 gap-3 mb-4">${LEVEL_2_STEPS.map(s => { 
+                    <div class="grid grid-cols-2 gap-4 mb-6">${LEVEL_2_STEPS.map(s => { 
                         const used = STATE.orderStep.find(x => x.id === s.id); 
-                        return `<button onclick="addOrder('${s.id}')" ${used?'disabled':''} class="bg-white p-3 rounded-xl border border-gray-200 flex items-center gap-3 active:scale-95 ${used?'opacity-30':''}">
-                            <div class="w-10 h-10 flex items-center justify-center">
-                                <img src="${s.img}" class="w-full h-full object-contain" onerror="${onError}">
-                                <i data-lucide="${s.iconFallback}" class="hidden w-6 h-6 text-orange-500"></i>
+                        return `<button onclick="addOrder('${s.id}')" ${used?'disabled':''} class="bg-white p-4 rounded-[1.5rem] border-2 border-gray-100 flex items-center gap-4 active:scale-95 shadow-sm transition-all ${used?'opacity-30 border-gray-50 bg-gray-50':''}">
+                            <div class="w-20 h-20 flex-shrink-0 flex items-center justify-center bg-blue-50/50 rounded-xl p-1">
+                                <img src="${s.img}" class="w-full h-full object-contain" onerror="handleImageError(this)">
+                                <i data-lucide="${s.iconFallback}" class="hidden w-10 h-10 text-orange-500"></i>
                             </div>
-                            <span class="text-xs font-bold text-gray-700">${s.label}</span>
+                            <span class="text-xs font-black text-gray-700 leading-tight">${s.label}</span>
                         </button>`; 
                     }).join('')}</div>
-                    <button onclick="resetOrder()" class="text-center w-full text-gray-400 text-sm underline font-bold">Ulangi</button>`;
+                    <button onclick="resetOrder()" class="text-center w-full text-gray-400 text-sm font-bold uppercase tracking-widest hover:text-blue-500 transition-colors">Ulangi Urutan</button>`;
             } 
             else if (STATE.currentLevel === 3) {
                 updateAvatar('excited', 'Jawab pertanyaannya ya!');
                 const q = LEVEL_3_QUIZ[STATE.quizIndex];
-                container.innerHTML = header + `<div class="bg-white p-6 rounded-3xl shadow-sm border border-blue-50 mb-6 text-center"><h3 class="font-bold text-blue-900 text-lg leading-tight">${q.q}</h3></div>
-                    <div class="space-y-3">${q.opts.map(opt => `<button onclick="answerQuiz(${opt.c})" class="w-full bg-white border-2 border-gray-100 p-4 rounded-2xl flex items-center gap-4 active:scale-95 active:bg-blue-50"><div class="bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center text-blue-500"><i data-lucide="${opt.i}"></i></div><span class="font-bold text-gray-600">${opt.t}</span></button>`).join('')}</div>`;
+                container.innerHTML = header + `<div class="bg-white p-8 rounded-[2rem] shadow-sm border border-blue-50 mb-8 text-center"><h3 class="font-bold text-blue-900 text-xl leading-tight">${q.q}</h3></div>
+                    <div class="space-y-4">${q.opts.map(opt => `<button onclick="answerQuiz(${opt.c})" class="w-full bg-white border-2 border-gray-100 p-5 rounded-2xl flex items-center gap-5 active:scale-95 active:bg-blue-50 shadow-sm"><div class="bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center text-blue-500"><i data-lucide="${opt.i}" class="w-7 h-7"></i></div><span class="font-bold text-gray-700 text-lg">${opt.t}</span></button>`).join('')}</div>`;
             } 
             else if (STATE.currentLevel === 4) {
                 updateAvatar('happy', 'Seret alat ke luka di tangan!');
-                
-                let woundContent = '';
-                const fb = (t) => `<div class='bg-gray-200 w-full h-full flex items-center justify-center text-xs font-bold'>${t}</div>`;
-
-                if(STATE.woundState===0) woundContent = `<img src="img/karakter_luka_kotor.png" class="w-full h-full object-contain" onerror="this.parentElement.innerHTML='${fb('LUKA')}'">`;
-                if(STATE.woundState===1) woundContent = `<img src="img/karakter_luka_bersih.png" class="w-full h-full object-contain" onerror="this.parentElement.innerHTML='${fb('BERSIH')}'">`;
-                if(STATE.woundState===2) woundContent = `<img src="img/karakter_luka_kering.png" class="w-full h-full object-contain" onerror="this.parentElement.innerHTML='${fb('KERING')}'">`;
-                if(STATE.woundState===3) woundContent = `<img src="img/karakter_luka_obat.png" class="w-full h-full object-contain" onerror="this.parentElement.innerHTML='${fb('OBAT')}'">`;
-                if(STATE.woundState===4) woundContent = `<img src="img/karakter_luka_tutup.png" class="w-full h-full object-contain" onerror="this.parentElement.innerHTML='${fb('TUTUP')}'">`;
-
+                let woundImg = 'img/karakter_luka_kotor.png';
+                if(STATE.woundState===1) woundImg = 'img/karakter_luka_bersih.png';
+                if(STATE.woundState===2) woundImg = 'img/karakter_luka_kering.png';
+                if(STATE.woundState===3) woundImg = 'img/karakter_luka_obat.png';
+                if(STATE.woundState===4) woundImg = 'img/karakter_luka_tutup.png';
                 container.innerHTML = header + `
-                    <div class="flex justify-center mb-6 mt-2">
-                        <div id="drop-zone" class="w-64 h-64 relative flex items-center justify-center transition-transform duration-300">
-                            ${woundContent}
-                        </div>
-                    </div>
-                    <p class="text-center text-xs text-gray-400 mb-2 font-bold uppercase tracking-wider">Kotak P3K (Seret Alatnya)</p>
-                    <div class="bg-white p-4 rounded-3xl border-2 border-blue-50 shadow-sm flex justify-around flex-wrap gap-2">
+                    <div class="flex justify-center mb-8 mt-4"><div id="drop-zone" class="w-80 h-80 relative flex items-center justify-center transition-transform duration-300"><img src="${woundImg}" class="w-full h-full object-contain" onerror="handleWoundError(this)"></div></div>
+                    <p class="text-center text-[10px] text-gray-400 mb-3 font-bold uppercase tracking-widest">KOTAK P3K (SERET ALATNYA)</p>
+                    <div class="bg-white p-5 rounded-[2.5rem] border-2 border-blue-50 shadow-inner flex justify-around flex-wrap gap-4">
                         ${renderDraggableTool('air', 'img/alat_air.png', 'Air')} 
                         ${renderDraggableTool('tisu', 'img/alat_kasa.png', 'Tisu')} 
                         ${renderDraggableTool('obat', 'img/alat_betadine.png', 'Obat')} 
@@ -468,120 +601,160 @@
         }
         
         function renderDraggableTool(id, imgPath, label) {
-            return `<div class="draggable-item flex flex-col items-center gap-1 w-16" data-id="${id}" draggable="true">
-                <div class="w-14 h-14 bg-gray-50 rounded-2xl border-2 border-gray-100 flex items-center justify-center shadow-sm p-1">
-                    <img src="${imgPath}" class="w-full h-full object-contain pointer-events-none" onerror="this.style.display='none'; this.parentElement.innerHTML='❓'">
+            return `<div class="draggable-item flex flex-col items-center gap-2 w-20" data-id="${id}" draggable="true">
+                <div class="w-16 h-16 bg-white rounded-2xl border-2 border-blue-50 flex items-center justify-center shadow-md p-1.5 transition-transform">
+                    <img src="${imgPath}" class="w-full h-full object-contain pointer-events-none" onerror="handleImageError(this)">
                 </div>
-                <span class="text-[10px] font-bold text-gray-500">${label}</span>
+                <span class="text-[10px] font-black text-gray-500 uppercase">${label}</span>
             </div>`;
         }
 
-        // --- ACTIONS ---
         function completeLevel(lvl) { if (!STATE.completedLevels.includes(lvl)) STATE.completedLevels.push(lvl); }
-        window.navigate = (s) => { 
-            playSfx('click'); 
-            STATE.screen = s; render(); 
-        };
-        window.toggleTool = (id) => { 
+        function navigate(s) { playSfx('click'); STATE.screen = s; render(); }
+        function toggleTool(id) { 
             playSfx('click');
             const idx = STATE.selectedTools.indexOf(id);
-            if(idx > -1) STATE.selectedTools.splice(idx, 1); else STATE.selectedTools.push(id); render(); 
-        };
+            if(idx > -1) STATE.selectedTools.splice(idx, 1); 
+            else STATE.selectedTools.push(id); 
+            render(); 
+        }
         
-        window.checkLevel1 = () => {
-            const correct = ['air', 'betadine', 'kasa_tisu', 'plester']; const user = STATE.selectedTools;
+        function checkLevel1() {
+            const correct = ['air', 'betadine', 'kasa_tisu', 'plester'];
+            const user = STATE.selectedTools;
             const isCorrect = correct.every(v => user.includes(v)) && user.every(v => correct.includes(v));
-            if(isCorrect) { 
-                playSfx('correct');
-                STATE.score += 20; completeLevel(1); setTimeout(() => showVictory(), 500); 
-            } else {
-                playSfx('wrong');
-                updateAvatar('sad', 'Masih salah. Coba lagi.');
-            }
-        };
-        window.addOrder = (id) => {
+            if(isCorrect) { playSfx('correct'); STATE.score += 20; completeLevel(1); setTimeout(showVictory, 500); } 
+            else { playSfx('wrong'); updateAvatar('sad', 'ini salah okee'); }
+        }
+
+        function addOrder(id) {
             playSfx('click');
             const target = LEVEL_2_STEPS[STATE.orderStep.length].id;
             if(id === target) {
                 STATE.orderStep.push(LEVEL_2_STEPS.find(x => x.id === id));
-                if(STATE.orderStep.length === 5) { 
-                    playSfx('correct');
-                    STATE.score += 25; completeLevel(2); setTimeout(() => showVictory(), 500); 
-                } else { 
-                    render(); updateAvatar('happy', 'Benar! Lanjut...'); 
-                }
-            } else {
-                playSfx('wrong');
-                updateAvatar('sad', 'Bukan itu. Urutannya salah.');
-            }
-        };
-        window.resetOrder = () => { STATE.orderStep=[]; render(); };
-        window.answerQuiz = (c) => {
+                if(STATE.orderStep.length === 5) { playSfx('correct'); STATE.score += 25; completeLevel(2); setTimeout(showVictory, 500); } 
+                else { render(); updateAvatar('happy', 'iyaa bener'); }
+            } else { playSfx('wrong'); updateAvatar('sad', 'ini salah okee'); }
+        }
+
+        function resetOrder() { STATE.orderStep=[]; render(); }
+
+        function answerQuiz(c) {
             if(c) {
                 playSfx('correct');
-                if(STATE.quizIndex < LEVEL_3_QUIZ.length-1) { STATE.quizIndex++; updateAvatar('happy', 'Betul!'); render(); }
-                else { STATE.score+=20; completeLevel(3); setTimeout(() => showVictory(), 500); }
-            } else {
-                playSfx('wrong');
-                updateAvatar('sad', 'Salah. Coba lagi.');
-            }
-        };
+                if(STATE.quizIndex < LEVEL_3_QUIZ.length-1) { STATE.quizIndex++; updateAvatar('happy', 'iyaa bener'); render(); }
+                else { STATE.score+=20; completeLevel(3); setTimeout(showVictory, 500); }
+            } else { playSfx('wrong'); updateAvatar('sad', 'ini salah okee'); }
+        }
 
-        // DRAG & DROP & TOUCH LOGIC
+        let activeDragItem = null, cloneItem = null, touchOffsetX = 0, touchOffsetY = 0;
         function initDragAndDrop() {
-            const items = document.querySelectorAll('.draggable-item'); const zone = document.getElementById('drop-zone');
-            
-            // Mouse
-            items.forEach(item => { item.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', item.dataset.id); item.style.opacity = '0.5'; }); item.addEventListener('dragend', () => item.style.opacity = '1'); });
-            
-            // Fixed Zone Events
+            const items = document.querySelectorAll('.draggable-item');
+            const zone = document.getElementById('drop-zone');
+            items.forEach(item => {
+                item.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', item.dataset.id); item.style.opacity = '0.5'; });
+                item.addEventListener('dragend', () => item.style.opacity = '1');
+                item.addEventListener('touchstart', handleTouchStart, {passive: false});
+                item.addEventListener('touchmove', handleTouchMove, {passive: false});
+                item.addEventListener('touchend', handleTouchEnd);
+            });
             zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drop-zone-active'); });
             zone.addEventListener('dragleave', () => zone.classList.remove('drop-zone-active'));
             zone.addEventListener('drop', (e) => { e.preventDefault(); zone.classList.remove('drop-zone-active'); handleDropLogic(e.dataTransfer.getData('text/plain')); });
-
-            // Touch
-            items.forEach(item => { item.addEventListener('touchstart', handleTouchStart, {passive: false}); item.addEventListener('touchmove', handleTouchMove, {passive: false}); item.addEventListener('touchend', handleTouchEnd); });
         }
-        let activeDragItem = null, cloneItem = null, touchOffsetX = 0, touchOffsetY = 0;
-        function handleTouchStart(e) { e.preventDefault(); activeDragItem = e.currentTarget; cloneItem = activeDragItem.cloneNode(true); cloneItem.classList.add('dragging-clone'); const rect = activeDragItem.getBoundingClientRect(); touchOffsetX = e.touches[0].clientX - rect.left; touchOffsetY = e.touches[0].clientY - rect.top; cloneItem.style.left = (e.touches[0].clientX - touchOffsetX)+'px'; cloneItem.style.top = (e.touches[0].clientY - touchOffsetY)+'px'; document.body.appendChild(cloneItem); activeDragItem.style.opacity = '0.3'; }
-        function handleTouchMove(e) { if(!activeDragItem) return; e.preventDefault(); cloneItem.style.left = (e.touches[0].clientX - touchOffsetX)+'px'; cloneItem.style.top = (e.touches[0].clientY - touchOffsetY)+'px'; const zone = document.getElementById('drop-zone').getBoundingClientRect(); const touch = e.touches[0]; if(touch.clientX >= zone.left && touch.clientX <= zone.right && touch.clientY >= zone.top && touch.clientY <= zone.bottom) document.getElementById('drop-zone').classList.add('drop-zone-active'); else document.getElementById('drop-zone').classList.remove('drop-zone-active'); }
-        function handleTouchEnd(e) { if(!activeDragItem) return; const zone = document.getElementById('drop-zone').getBoundingClientRect(); const clone = cloneItem.getBoundingClientRect(); if(clone.left + clone.width/2 >= zone.left && clone.left + clone.width/2 <= zone.right && clone.top + clone.height/2 >= zone.top && clone.top + clone.height/2 <= zone.bottom) handleDropLogic(activeDragItem.dataset.id); cloneItem.remove(); activeDragItem.style.opacity = '1'; activeDragItem = null; cloneItem = null; document.getElementById('drop-zone').classList.remove('drop-zone-active'); }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            activeDragItem = e.currentTarget;
+            cloneItem = activeDragItem.cloneNode(true);
+            cloneItem.classList.add('dragging-clone');
+            const rect = activeDragItem.getBoundingClientRect();
+            touchOffsetX = e.touches[0].clientX - rect.left;
+            touchOffsetY = e.touches[0].clientY - rect.top;
+            cloneItem.style.left = (e.touches[0].clientX - touchOffsetX) + 'px';
+            cloneItem.style.top = (e.touches[0].clientY - touchOffsetY) + 'px';
+            document.body.appendChild(cloneItem);
+            activeDragItem.style.opacity = '0.3';
+        }
+
+        function handleTouchMove(e) {
+            if(!activeDragItem) return;
+            e.preventDefault();
+            cloneItem.style.left = (e.touches[0].clientX - touchOffsetX) + 'px';
+            cloneItem.style.top = (e.touches[0].clientY - touchOffsetY) + 'px';
+            const zone = document.getElementById('drop-zone').getBoundingClientRect();
+            const touch = e.touches[0];
+            if(touch.clientX >= zone.left && touch.clientX <= zone.right && touch.clientY >= zone.top && touch.clientY <= zone.bottom) document.getElementById('drop-zone').classList.add('drop-zone-active');
+            else document.getElementById('drop-zone').classList.remove('drop-zone-active');
+        }
+
+        function handleTouchEnd(e) {
+            if(!activeDragItem) return;
+            const zoneRect = document.getElementById('drop-zone').getBoundingClientRect();
+            const cloneRect = cloneItem.getBoundingClientRect();
+            const centerX = cloneRect.left + cloneRect.width / 2;
+            const centerY = cloneRect.top + cloneRect.height / 2;
+            if(centerX >= zoneRect.left && centerX <= zoneRect.right && centerY >= zoneRect.top && centerY <= zoneRect.bottom) handleDropLogic(activeDragItem.dataset.id);
+            cloneItem.remove();
+            activeDragItem.style.opacity = '1'; activeDragItem = null; cloneItem = null;
+            document.getElementById('drop-zone').classList.remove('drop-zone-active');
+        }
 
         function handleDropLogic(toolId) {
-            const s = STATE.woundState; let success = false;
+            const s = STATE.woundState;
+            let success = false;
             if (toolId === 'air' && s === 0) { STATE.woundState = 1; success = true; }
             else if (toolId === 'tisu' && s === 1) { STATE.woundState = 2; success = true; }
             else if (toolId === 'obat' && s === 2) { STATE.woundState = 3; success = true; }
             else if (toolId === 'plester' && s === 3) { STATE.woundState = 4; success = true; }
             if (success) {
-                playSfx('correct');
-                updateAvatar('happy', 'Benar! Bagus sekali.');
-                if (STATE.woundState === 4) { STATE.score += 35; completeLevel(4); setTimeout(() => showVictory(), 500); } 
+                playSfx('correct'); updateAvatar('happy', 'iyaa bener');
+                if (STATE.woundState === 4) { STATE.score += 35; completeLevel(4); setTimeout(showVictory, 500); } 
                 else render();
-            } else {
-                playSfx('wrong');
-                updateAvatar('sad', 'Bukan itu dulu. Ingat urutannya?');
-            }
+            } else { playSfx('wrong'); updateAvatar('sad', 'ini salah okee'); }
         }
 
         function renderReflection(container) {
-            container.innerHTML = `<h2 class="text-xl font-bold mb-4 text-center">Bagaimana perasaanmu?</h2><div class="grid grid-cols-2 gap-4 w-full mb-8"><button onclick="endGame()" class="bg-green-100 p-6 rounded-3xl flex flex-col items-center gap-2 border-2 border-green-200 active:scale-95"><i data-lucide="smile" class="w-12 h-12 text-green-600"></i><span class="font-bold text-green-800">Senang</span></button><button onclick="endGame()" class="bg-blue-100 p-6 rounded-3xl flex flex-col items-center gap-2 border-2 border-blue-200 active:scale-95"><i data-lucide="thumbs-up" class="w-12 h-12 text-blue-600"></i><span class="font-bold text-blue-800">Bangga</span></button></div>`;
-            updateAvatar('happy', 'Kamu berhasil mengobati luka kamu!');
+            container.innerHTML = `
+                <h2 class="text-2xl font-bold mb-6 text-center text-blue-800">Bagaimana perasaanmu?</h2>
+                <div class="grid grid-cols-2 gap-6 w-full mb-10">
+                    <button onclick="endGame()" class="bg-green-100 p-8 rounded-[2.5rem] flex flex-col items-center gap-4 border-2 border-green-200 active:scale-95 shadow-sm">
+                        <i data-lucide="smile" class="w-16 h-16 text-green-600"></i><span class="font-bold text-green-800 text-lg">Senang</span>
+                    </button>
+                    <button onclick="endGame()" class="bg-blue-100 p-8 rounded-[2.5rem] flex flex-col items-center gap-4 border-2 border-blue-200 active:scale-95 shadow-sm">
+                        <i data-lucide="thumbs-up" class="w-16 h-16 text-blue-600"></i><span class="font-bold text-blue-800 text-lg">Bangga</span>
+                    </button>
+                </div>`;
+            updateAvatar('happy', 'Wah, kamu sudah berhasil mengobati luka!');
         }
+
         function endGame() { STATE.screen = 'final_score'; render(); }
         function renderFinalScore(container) {
             playSfx('victory');
             const progress = (STATE.completedLevels.length / 4) * 100;
-            container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-center"><i data-lucide="trophy" class="w-24 h-24 text-yellow-500 mb-4 animate-bounce-slow"></i><h1 class="text-3xl font-black text-yellow-700 uppercase mb-2">Luar Biasa!</h1><p class="text-gray-500 mb-4">Laporan Akhir</p><div class="bg-white p-6 rounded-3xl shadow-xl border-4 border-white mb-6 w-full max-w-xs"><div class="mb-4 border-b pb-4 border-gray-100"><span class="text-xs font-bold text-gray-400 uppercase">Total Skor</span><div class="text-5xl font-black text-blue-600 mt-1">${STATE.score}</div></div><div class="text-left"><span class="text-xs font-bold text-gray-400 uppercase">Kelulusan Level</span><div class="w-full h-4 bg-gray-100 rounded-full mt-2 overflow-hidden border"><div class="h-full bg-green-500 progress-striped" style="width: ${progress}%"></div></div><p class="text-xs text-center mt-2 font-bold text-gray-500">${STATE.completedLevels.length} dari 4 Level Selesai</p></div></div><button onclick="location.reload()" class="w-full bg-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95">MAIN LAGI</button></div>`;
-            updateAvatar('excited', 'Sekarang Kamu Bisa Mengobati Luka Kamu Sendiri!');
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-center">
+                    <i data-lucide="trophy" class="w-28 h-28 text-yellow-500 mb-6 animate-bounce-slow"></i>
+                    <h1 class="text-4xl font-black text-yellow-700 uppercase mb-2">Luar Biasa!</h1>
+                    <p class="text-gray-500 mb-6 font-bold uppercase tracking-widest text-sm">Laporan Akhir</p>
+                    <div class="bg-white p-8 rounded-[3rem] shadow-xl border-4 border-white mb-8 w-full max-w-xs">
+                        <div class="mb-6 border-b pb-6 border-gray-100">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Skor</span>
+                            <div class="text-6xl font-black text-blue-600 mt-2">${STATE.score}</div>
+                        </div>
+                        <div class="text-left">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Progres Level</span>
+                            <div class="w-full h-5 bg-gray-100 rounded-full mt-3 overflow-hidden border">
+                                <div class="h-full bg-green-500 progress-striped" style="width: ${progress}%"></div>
+                            </div>
+                            <p class="text-sm text-center mt-3 font-bold text-gray-600">${STATE.completedLevels.length} dari 4 Level Selesai</p>
+                        </div>
+                    </div>
+                    <button onclick="location.reload()" class="w-full bg-blue-500 text-white font-bold py-5 rounded-[2rem] shadow-lg active:scale-95 text-xl border-b-4 border-blue-700">MAIN LAGI</button>
+                </div>`;
+            updateAvatar('excited', 'Hebat! Sekarang kamu sudah tahu cara merawat luka sendiri!');
         }
         render();
     </script>
 </body>
-
 </html>
-
-
-
-
-
