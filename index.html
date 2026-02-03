@@ -19,6 +19,8 @@
             font-family: 'Varela Round', sans-serif;
             overscroll-behavior: none; 
             -webkit-tap-highlight-color: transparent;
+            background-color: #FFF7ED; /* Pastel Peach */
+            color: #1F2937; /* Dark Gray */
         }
 
         /* Animasi */
@@ -26,16 +28,20 @@
         @keyframes pop-in { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes pulse-soft { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
+        @keyframes star-appear { 0% { transform: scale(0) rotate(-45deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
         
         .animate-bounce-slow { animation: bounce-slow 3s infinite; }
         .animate-pop-in { animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         .animate-spin-slow { animation: spin-slow 10s linear infinite; }
         .animate-shake { animation: shake 0.2s ease-in-out 3; }
+        .animate-pulse-soft { animation: pulse-soft 2s infinite ease-in-out; }
+        .animate-star { animation: star-appear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
-        /* Gaya Drag & Drop */
+        /* Gaya Seret & Lepas */
         .draggable-item { cursor: grab; touch-action: none; user-select: none; will-change: transform; }
         .draggable-item:active { cursor: grabbing; transform: scale(1.1); z-index: 100; }
-        .drop-zone-active { border-color: #3b82f6 !important; background-color: #eff6ff !important; transform: scale(1.02); }
+        .drop-zone-active { border-color: #38BDF8 !important; background-color: #f0f9ff !important; transform: scale(1.02); }
         #drop-zone { touch-action: none; transition: all 0.3s ease; }
 
         .dragging-clone { position: fixed; pointer-events: none; z-index: 9999; opacity: 0.9; transform: scale(1.1); will-change: left, top; }
@@ -51,23 +57,26 @@
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .breath-circle { transition: transform 4s ease-in-out; transform: scale(0.6); }
+        .breath-circle.expand { transform: scale(1.2); }
     </style>
 </head>
-<body class="bg-blue-50 text-gray-800 h-screen w-screen overflow-hidden flex justify-center bg-gradient-to-br from-blue-50 to-white">
+<body class="h-screen w-screen overflow-hidden flex justify-center bg-gradient-to-br from-[#FFF7ED] to-white">
 
     <!-- Kontainer Utama -->
-    <div id="app" class="relative w-full max-md h-full bg-white/60 shadow-2xl flex flex-col border-x border-white overflow-hidden">
+    <div id="app" class="relative w-full max-md h-full bg-white/40 shadow-2xl flex flex-col border-x border-white overflow-hidden">
         <!-- Konten disuntikkan oleh JS -->
     </div>
 
     <!-- Avatar Pendamping -->
     <div id="avatar-container" class="fixed bottom-4 left-2 z-40 flex items-end gap-1 w-full max-w-[380px]">
-        <button onclick="toggleAvatar()" class="bg-white border-2 border-blue-200 text-blue-500 rounded-full p-1.5 shadow-md hover:bg-blue-50 active:scale-95 transition-all z-50 mb-4">
+        <button onclick="toggleAvatar()" class="bg-white border-2 border-[#A7F3D0] text-[#38BDF8] rounded-full p-1.5 shadow-md hover:bg-orange-50 active:scale-95 transition-all z-50 mb-4">
             <i data-lucide="chevron-left" class="w-5 h-5 avatar-toggle-icon" id="avatar-arrow"></i>
         </button>
         <div id="avatar-wrapper" class="avatar-content flex flex-col items-start gap-1">
-            <div id="avatar-bubble" class="bg-white p-3 rounded-2xl rounded-bl-none shadow-lg border-2 border-blue-100 mb-1 relative max-w-[220px] animate-pop-in hidden">
-                <p id="avatar-text" class="text-gray-700 font-bold text-sm leading-tight">Halo!</p>
+            <div id="avatar-bubble" class="bg-white p-3 rounded-2xl rounded-bl-none shadow-lg border-2 border-[#A7F3D0] mb-1 relative max-w-[220px] animate-pop-in hidden">
+                <p id="avatar-text" class="text-[#1F2937] font-bold text-sm leading-tight">Halo!</p>
             </div>
             <div id="avatar-bear" class="w-20 h-20 bg-white rounded-full border-4 border-white shadow-xl flex items-center justify-center overflow-hidden animate-bounce-slow cursor-pointer" onclick="toggleAvatar()">
                 <img src="img/tiara.png" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100?text=🐻'">
@@ -77,43 +86,45 @@
 
     <!-- Tombol Navigasi Kanan Atas -->
     <div class="fixed top-20 right-4 z-50 flex flex-col gap-2 items-center">
-        <!-- Tombol Panduan -->
-        <button id="guide-btn" onclick="openPanduan()" class="bg-white/90 p-2 rounded-full shadow-md border border-blue-100 text-blue-500 hover:bg-white active:scale-95 transition-all hidden">
+        <button id="guide-btn" onclick="openPanduan()" class="bg-white/90 p-2 rounded-full shadow-md border border-[#A7F3D0] text-[#38BDF8] hover:bg-white active:scale-95 transition-all hidden">
             <i data-lucide="book-open" class="w-6 h-6"></i>
         </button>
-        <!-- Tombol Audio Mute -->
-        <button id="mute-btn" onclick="toggleMute()" class="bg-white/90 p-2 rounded-full shadow-md border border-gray-200 text-gray-500 hover:bg-white active:scale-95 transition-all hidden">
+        <button id="mute-btn" onclick="toggleMute()" class="bg-white/90 p-2 rounded-full shadow-md border border-gray-200 text-[#6B7280] hover:bg-white active:scale-95 transition-all hidden">
             <i data-lucide="volume-2" id="mute-icon" class="w-6 h-6"></i>
         </button>
     </div>
 
     <!-- MODAL BUKU PANDUAN -->
     <div id="guide-modal" class="hidden fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl animate-pop-in overflow-hidden border-4 border-blue-100">
-            <!-- Header Modal -->
-            <div class="p-5 border-b border-blue-50 flex justify-between items-center bg-blue-50/50">
+        <div class="bg-white rounded-3xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl animate-pop-in overflow-hidden border-4 border-[#A7F3D0]">
+            <div class="p-5 border-b border-orange-50 flex justify-between items-center bg-[#A7F3D0]/30">
                 <div class="flex items-center gap-2">
-                    <i data-lucide="book-open" class="text-blue-600"></i>
-                    <h2 class="font-black text-blue-800 text-lg uppercase tracking-tight leading-tight">Buku Panduan</h2>
+                    <i data-lucide="book-open" class="text-[#1F2937]"></i>
+                    <h2 class="font-black text-[#1F2937] text-lg uppercase tracking-tight leading-tight">Buku Panduan</h2>
                 </div>
-                <button onclick="closePanduan()" class="bg-white p-1 rounded-full text-gray-400 hover:text-red-500 transition-colors shadow-sm"><i data-lucide="x"></i></button>
+                <button onclick="closePanduan()" class="bg-white p-1 rounded-full text-[#6B7280] hover:text-red-500 transition-colors shadow-sm"><i data-lucide="x"></i></button>
             </div>
-            <!-- Isi Modal -->
-            <div class="p-6 overflow-y-auto no-scrollbar text-sm leading-relaxed text-gray-700">
-                <div class="text-center mb-6">
-                    <h1 class="text-xl font-black text-gray-900 leading-tight">BUKU PENGGUNAAN APLIKASI</h1>
-                    <p class="text-blue-600 font-bold mt-1">Gamifikasi Pembelajaran Self Care (Perawatan Luka)</p>
-                    <p class="text-xs text-gray-400 italic">Untuk Orang Tua Murid dan Guru/Terapis</p>
+            
+            <div class="p-6 overflow-y-auto no-scrollbar text-sm leading-relaxed text-[#1F2937]">
+                <div class="text-center mb-8 border-b-2 border-dashed border-[#A7F3D0] pb-6">
+                    <h1 class="text-xl font-black text-[#1F2937] leading-tight uppercase">Buku Penggunaan Aplikasi</h1>
+                    <p class="text-[#38BDF8] font-bold mt-1 uppercase text-sm">Gamifikasi Pembelajaran Self Care (Perawatan Luka)</p>
+                    <p class="text-[10px] text-[#6B7280] italic mt-2 uppercase tracking-widest">Untuk Orang Tua Murid dan Guru/Terapis</p>
                 </div>
 
                 <section class="mb-6">
-                    <h3 class="font-black text-blue-700 uppercase mb-2 border-b-2 border-blue-100 pb-1">A. Pendahuluan</h3>
-                    <p>Aplikasi Gamifikasi Pembelajaran Self Care (Perawatan Luka) dikembangkan untuk membantu peserta didik disabilitas intelektual ringan dalam mempelajari keterampilan perawatan luka secara mandiri, aman, dan menyenangkan. Aplikasi ini menggabungkan elemen gamifikasi (poin, level, progres, dan reward) dengan model pembelajaran kontekstual, sehingga materi mudah dipahami dan dapat diterapkan dalam kehidupan sehari-hari.</p>
+                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
+                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">A</span> Pendahuluan
+                    </h3>
+                    <p class="text-xs text-[#6B7280]">Aplikasi Gamifikasi Pembelajaran Self Care (Perawatan Luka) dikembangkan untuk membantu peserta didik disabilitas intelektual ringan dalam mempelajari keterampilan perawatan luka secara mandiri, aman, dan menyenangkan. Aplikasi ini menggabungkan elemen gamifikasi (poin, level, progres, dan reward) dengan model pembelajaran kontekstual, sehingga materi mudah dipahami dan dapat diterapkan dalam kehidupan sehari-hari.</p>
+                    <p class="text-xs text-[#6B7280] mt-2">Buku penggunaan ini disusun sebagai panduan praktis bagi orang tua murid serta guru/terapis dalam mendampingi anak saat menggunakan aplikasi.</p>
                 </section>
 
                 <section class="mb-6">
-                    <h3 class="font-black text-blue-700 uppercase mb-2 border-b-2 border-blue-100 pb-1">B. Sasaran Pengguna</h3>
-                    <ul class="list-disc pl-5 space-y-1">
+                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
+                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">B</span> Sasaran Pengguna
+                    </h3>
+                    <ul class="list-disc pl-5 space-y-1 text-xs text-[#6B7280]">
                         <li>Peserta didik disabilitas intelektual ringan</li>
                         <li>Orang tua/wali murid sebagai pendamping di rumah</li>
                         <li>Guru/Terapis sebagai fasilitator pembelajaran di sekolah atau pusat terapi</li>
@@ -121,8 +132,10 @@
                 </section>
 
                 <section class="mb-6">
-                    <h3 class="font-black text-blue-700 uppercase mb-2 border-b-2 border-blue-100 pb-1">C. Tujuan Penggunaan Aplikasi</h3>
-                    <ul class="list-disc pl-5 space-y-1">
+                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
+                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">C</span> Tujuan Penggunaan
+                    </h3>
+                    <ul class="list-disc pl-5 space-y-1 text-xs text-[#6B7280]">
                         <li>Membantu anak memahami langkah-langkah dasar perawatan luka</li>
                         <li>Meningkatkan kemandirian anak dalam self care</li>
                         <li>Meningkatkan motivasi belajar melalui permainan edukatif</li>
@@ -131,153 +144,142 @@
                 </section>
 
                 <section class="mb-6">
-                    <h3 class="font-black text-blue-700 uppercase mb-2 border-b-2 border-blue-100 pb-1">D. Perangkat dan Akses</h3>
-                    <p class="mb-2">Aplikasi dapat diakses melalui web application menggunakan Komputer/Laptop, Tablet, atau Smartphone.</p>
-                    <p class="font-bold">Kebutuhan:</p>
-                    <ul class="list-disc pl-5">
-                        <li>Koneksi internet</li>
-                        <li>Browser (Chrome, Edge, atau Firefox)</li>
-                    </ul>
+                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
+                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">D</span> Perangkat dan Akses
+                    </h3>
+                    <p class="text-xs text-[#6B7280] mb-2 italic">Aplikasi dapat diakses melalui web application menggunakan Komputer/Laptop, Tablet, atau Smartphone.</p>
+                    <div class="bg-[#FFF7ED] p-3 rounded-xl border border-[#A7F3D0] text-[10px]">
+                        <p class="font-bold uppercase text-[#38BDF8] mb-1">Kebutuhan:</p>
+                        <ul class="list-disc pl-4 space-y-0.5 text-[#6B7280]">
+                            <li>Koneksi internet</li>
+                            <li>Browser (Chrome, Edge, atau Firefox)</li>
+                        </ul>
+                    </div>
                 </section>
 
                 <section class="mb-6">
-                    <h3 class="font-black text-blue-700 uppercase mb-2 border-b-2 border-blue-100 pb-1">E. Struktur dan Fitur Aplikasi</h3>
-                    <div class="space-y-4">
+                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
+                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">E</span> Struktur dan Fitur
+                    </h3>
+                    <div class="space-y-4 text-xs">
                         <div>
-                            <p class="font-bold text-gray-800">1. Halaman Awal</p>
-                            <p class="text-xs text-gray-500 pl-4">Kolom Nama Pengguna & Tombol Play.</p>
+                            <p class="font-bold text-[#1F2937]">1. Halaman Awal</p>
+                            <p class="text-[#6B7280] pl-4 italic">Tampilan ilustrasi, kolom Nama Pengguna, dan Tombol Play.</p>
                         </div>
                         <div>
-                            <p class="font-bold text-gray-800">2. Menu Utama</p>
-                            <p class="text-xs text-gray-500 pl-4">Materi, Level 1–4, Score & Progress.</p>
+                            <p class="font-bold text-[#1F2937]">2. Menu Materi (Modeling)</p>
+                            <p class="text-[#6B7280] pl-4 italic">Video pemodelan dan penjelasan alat (Air, Antiseptik, Kasa, Plester). Reward verbal diberikan setelah menonton.</p>
                         </div>
                         <div>
-                            <p class="font-bold text-gray-800">3. Menu Materi (Modeling)</p>
-                            <p class="text-xs text-gray-500 pl-4">Video pemodelan & penjelasan alat: air bersih, antiseptik, kasa, plester.</p>
-                        </div>
-                        <div>
-                            <p class="font-bold text-gray-800">4. Menu Level</p>
-                            <ul class="text-xs text-gray-500 pl-8 list-circle list-inside">
-                                <li>L1: Memilih Alat Perawatan Luka</li>
-                                <li>L2: Mengurutkan Langkah</li>
-                                <li>L3: Menjawab Pertanyaan Sederhana</li>
-                                <li>L4: Praktik Virtual (Drag & Drop)</li>
+                            <p class="font-bold text-[#1F2937]">3. Menu Level (Gamifikasi)</p>
+                            <ul class="pl-8 space-y-1 text-[#6B7280] list-circle list-inside">
+                                <li>L1 – Memilih Alat: Identifikasi alat yang tepat.</li>
+                                <li>L2 – Mengurutkan Langkah: Menyusun urutan prosedur.</li>
+                                <li>L3 – Menjawab Pertanyaan: Kuis sederhana pemahaman.</li>
+                                <li>L4 – Praktik Virtual: Simulasi Drag & Drop (Cuci tangan hingga tutup luka).</li>
                             </ul>
                         </div>
                         <div>
-                            <p class="font-bold text-gray-800">5. Refleksi dan Emosi</p>
-                            <p class="text-xs text-gray-500 pl-4">Anak memilih emotikon sesuai perasaan.</p>
+                            <p class="font-bold text-[#1F2937]">4. Refleksi dan Emosi</p>
+                            <p class="text-[#6B7280] pl-4 italic">Anak memilih emotikon sesuai perasaannya setelah belajar.</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="mb-6">
-                    <h3 class="font-black text-green-700 uppercase mb-2 border-b-2 border-green-100 pb-1">F. Panduan untuk Orang Tua</h3>
-                    <p class="font-bold text-gray-800">Peran Orang Tua:</p>
-                    <p class="mb-2 italic">Mendampingi anak saat pertama kali menggunakan, memberi arahan tanpa mengambil alih, serta memberi pujian.</p>
-                    <p class="font-bold text-gray-800">Langkah Pendampingan:</p>
-                    <ol class="list-decimal pl-5 space-y-1">
-                        <li>Pastikan anak nyaman dan fokus.</li>
-                        <li>Dampingi mengisi nama.</li>
-                        <li>Ajak menonton video hingga selesai.</li>
-                        <li>Biarkan anak mencoba menyelesaikan level.</li>
-                        <li>Diskusikan bersama setelah selesai bermain.</li>
-                    </ol>
+                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
+                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">F</span> Panduan Orang Tua
+                    </h3>
+                    <div class="space-y-2 text-xs text-[#6B7280]">
+                        <p><span class="font-bold text-[#38BDF8]">Peran:</span> Mendampingi tanpa mengambil alih, memberi arahan, dan pujian positif.</p>
+                        <p><span class="font-bold text-[#38BDF8]">Langkah:</span> Pastikan anak fokus, dampingi pengisian nama, tonton video materi, biarkan anak mencoba level, dan diskusikan hasilnya.</p>
+                    </div>
                 </section>
 
                 <section class="mb-6">
-                    <h3 class="font-black text-orange-700 uppercase mb-2 border-b-2 border-orange-100 pb-1">G. Panduan untuk Guru/Terapis</h3>
-                    <p class="font-bold text-gray-800 italic mb-2">Fasilitator dan pembimbing pembelajaran.</p>
-                    <ul class="list-disc pl-5 space-y-1">
-                        <li>Gunakan menu Materi sebagai apersepsi.</li>
-                        <li>Lakukan diskusi singkat setelah setiap level.</li>
-                        <li>Catat progres melalui fitur skor.</li>
-                        <li>Kombinasikan dengan praktik langsung menggunakan alat tiruan.</li>
-                    </ul>
+                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
+                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">G</span> Panduan Guru/Terapis
+                    </h3>
+                    <div class="space-y-2 text-xs text-[#6B7280]">
+                        <p><span class="font-bold text-[#38BDF8]">Langkah:</span> Gunakan video sebagai apersepsi, ajak anak menyelesaikan level secara bertahap, catat skor dan observasi perkembangan.</p>
+                        <p><span class="font-bold text-[#38BDF8]">Integrasi:</span> Kombinasikan dengan praktik langsung menggunakan alat tiruan secara individual maupun kelompok.</p>
+                    </div>
                 </section>
 
                 <section class="mb-6">
-                    <h3 class="font-black text-red-700 uppercase mb-2 border-b-2 border-red-100 pb-1">H. Prinsip Keamanan</h3>
-                    <p class="p-3 bg-red-50 rounded-xl border border-red-100 text-xs italic">Aplikasi tidak menggantikan perawatan medis profesional. Anak tetap harus didampingi orang dewasa. Materi difokuskan pada luka ringan.</p>
+                    <h3 class="font-black text-red-600 uppercase mb-2 border-b-2 border-red-100 pb-1 flex items-center gap-2">
+                        <span class="bg-red-100 text-red-600 w-6 h-6 rounded-full flex items-center justify-center text-xs">H</span> Keamanan
+                    </h3>
+                    <p class="text-xs text-red-500 bg-red-50 p-2 rounded-lg italic border border-red-100">Aplikasi tidak menggantikan perawatan medis profesional. Anak tetap harus didampingi orang dewasa. Materi difokuskan pada luka ringan.</p>
                 </section>
 
-                <section class="text-center mt-8 pt-4 border-t border-gray-100">
-                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Merawat Luka - Si Penolong Cilik © 2026</p>
-                </section>
+                <div class="mt-10 pt-6 border-t-2 border-[#A7F3D0] text-center">
+                    <p class="text-[10px] text-[#6B7280] font-bold uppercase tracking-[0.2em] mb-4">Disusun Oleh:</p>
+                    <p class="text-sm font-black text-[#1F2937]">Tiara Sinta Aulia</p>
+                    <p class="text-[10px] text-[#6B7280] uppercase">Program Studi S1 Pendidikan Luar Biasa</p>
+                    <p class="text-[10px] text-[#6B7280] uppercase">Universitas Negeri Surabaya</p>
+                </div>
             </div>
-            <!-- Footer Modal -->
+
             <div class="p-4 bg-gray-50 border-t border-gray-100">
-                <button onclick="closePanduan()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-2xl shadow-lg active:scale-95 transition-all">MENGERTI</button>
+                <button onclick="closePanduan()" class="w-full bg-[#38BDF8] text-white font-bold py-3 rounded-2xl shadow-lg active:scale-95 transition-all uppercase text-sm">Tutup Panduan</button>
             </div>
         </div>
     </div>
 
     <!-- MODAL KEMENANGAN -->
     <div id="victory-modal" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-[3rem] p-8 w-full max-w-sm text-center shadow-2xl border-4 border-yellow-200 relative overflow-hidden animate-pop-in">
-            <div class="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
-                 <svg class="w-[500px] h-[500px] text-yellow-500 animate-spin-slow" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v2a1 1 0 002 0V5zm0 8a1 1 0 10-2 0v2a1 1 0 002 0v-2zM4 10a1 1 0 001 1h2a1 1 0 100-2H5a1 1 0 00-1 1zm10 0a1 1 0 001 1h2a1 1 0 100-2h-2a1 1 0 00-1 1z" clip-rule="evenodd" /></svg>
-            </div>
+        <div class="bg-white rounded-[3rem] p-8 w-full max-w-sm text-center shadow-2xl border-4 border-[#A7F3D0] relative overflow-hidden animate-pop-in">
             <div class="relative z-10">
-                <h2 class="text-3xl font-black text-yellow-500 mb-2 drop-shadow-sm uppercase">HEBAT!</h2>
-                <h3 id="victory-name" class="text-xl font-bold text-blue-600 mb-6 capitalize">Nama Murid</h3>
+                <h2 class="text-3xl font-black text-orange-400 mb-2 drop-shadow-sm uppercase">Luar Biasa!</h2>
+                <h3 id="victory-name" class="text-xl font-bold text-[#38BDF8] mb-6 capitalize">Nama Murid</h3>
                 <div class="flex justify-center mb-6">
-                    <div class="w-32 h-32 bg-gradient-to-br from-yellow-200 to-yellow-400 rounded-full flex items-center justify-center border-4 border-white shadow-lg animate-bounce-slow">
-                        <i data-lucide="trophy" class="w-16 h-16 text-yellow-700 fill-current"></i>
+                    <div class="w-32 h-32 bg-gradient-to-br from-[#A7F3D0] to-[#38BDF8] rounded-full flex items-center justify-center border-4 border-white shadow-lg animate-bounce-slow">
+                        <i data-lucide="trophy" class="w-16 h-16 text-white fill-current"></i>
                     </div>
                 </div>
-                <div class="bg-yellow-50 p-3 rounded-xl border border-yellow-100 mb-6">
-                    <p class="text-sm font-bold text-yellow-800">Kamu menyelesaikan level ini!</p>
-                    <div class="flex justify-center gap-1 mt-1">
-                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
-                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
-                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
-                    </div>
-                </div>
-                <button onclick="closeVictory()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg border-b-4 border-blue-700 active:scale-95 transition-all">
-                    LANJUT <i data-lucide="arrow-right" class="inline w-5 h-5 ml-1"></i>
-                </button>
+                <button onclick="closeVictory()" class="w-full bg-[#38BDF8] hover:bg-[#0EA5E9] text-white font-bold py-4 rounded-2xl shadow-lg border-b-4 border-blue-700 active:scale-95 transition-all uppercase">Lanjutkan <i data-lucide="arrow-right" class="inline w-5 h-5 ml-1"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- ELEMEN AUDIO -->
     <audio id="sfx-correct" src="audio/correct.mp3"></audio>
     <audio id="sfx-wrong" src="audio/wrong.mp3"></audio>
     <audio id="sfx-victory" src="audio/victory.mp3"></audio>
     <audio id="sfx-click" src="audio/click.mp3"></audio>
 
     <script>
-        // --- DATA ---
         const STATE = {
             screen: 'intro', name: '', score: 0, completedLevels: [], currentLevel: 1,
             selectedTools: [], orderStep: [], quizIndex: 0, woundState: 0, isAvatarVisible: true,
-            isMuted: false
+            isMuted: false, relaxationStatus: 'ready', breathPhase: 'idle', breathCycle: 0
         };
 
         const LEVEL_1_TOOLS = [
-            { id: 'air', name: 'Air', img: 'img/alat_air.png', iconFallback: 'droplets', correct: true },
+            { id: 'sabun', name: 'Sabun Cuci Tangan', img: 'img/alat_sabun.png', iconFallback: 'hand-metal', correct: true },
+            { id: 'air', name: 'Air Bersih', img: 'img/alat_air.png', iconFallback: 'droplets', correct: true },
             { id: 'permen', name: 'Permen', img: 'img/alat_permen.png', iconFallback: 'candy', correct: false },
-            { id: 'betadine', name: 'Betadine', img: 'img/alat_betadine.png', iconFallback: 'flask-conical', correct: true },
+            { id: 'betadine', name: 'Antiseptik', img: 'img/alat_betadine.png', iconFallback: 'flask-conical', correct: true },
             { id: 'mainan', name: 'Mainan', img: 'img/alat_mainan.png', iconFallback: 'gamepad-2', correct: false },
-            { id: 'kasa_tisu', name: 'Kasa/Tisu', img: 'img/alat_kasa.png', iconFallback: 'square', correct: true },
+            { id: 'tisu_steril', name: 'Tisu Steril', img: 'img/alat_kasa.png', iconFallback: 'file-text', correct: true },
+            { id: 'kasa_steril', name: 'Kasa Steril', img: 'img/alat_kasa_asli.png', iconFallback: 'square', correct: true },
             { id: 'plester', name: 'Plester', img: 'img/alat_plester.png', iconFallback: 'bandage', correct: true }
         ];
 
         const LEVEL_2_STEPS = [
-            { id: 'tangan', label: 'Cuci Tangan', img: 'img/langkah_cuci.png', iconFallback: 'soap' },
-            { id: 'air', label: 'Basuh Luka', img: 'img/langkah_air.png', iconFallback: 'droplets' },
-            { id: 'kering', label: 'Keringkan', img: 'img/langkah_kering.png', iconFallback: 'file' }, 
-            { id: 'obat', label: 'Teteskan Obat', img: 'img/langkah_obat.png', iconFallback: 'flask-conical' },
-            { id: 'tutup', label: 'Tutup Luka', img: 'img/langkah_tutup.png', iconFallback: 'bandage' }
+            { id: 'tangan', label: 'Mencuci Tangan', img: 'img/langkah_cuci.png', iconFallback: 'soap' },
+            { id: 'air', label: 'Membersihkan Luka', img: 'img/langkah_air.png', iconFallback: 'droplets' },
+            { id: 'kering', label: 'Mengeringkan Luka', img: 'img/langkah_kering.png', iconFallback: 'file-text' }, 
+            { id: 'obat', label: 'Meneteskan Obat', img: 'img/langkah_obat.png', iconFallback: 'flask-conical' },
+            { id: 'tutup', label: 'Menutup Luka', img: 'img/langkah_tutup.png', iconFallback: 'square' },
+            { id: 'rekat', label: 'Merekatkan Plester', img: 'img/langkah_plester.png', iconFallback: 'bandage' }
         ];
 
         const LEVEL_3_QUIZ = [
-            { q: "Apa yang terjadi jika luka tidak dirawat?", opts: [{ t: "Infeksi", i: "skull", c: true }, { t: "Sembuh", i: "smile", c: false }] },
-            { q: "Mengapa luka harus dibersihkan?", opts: [{ t: "Biar Kuman Mati", i: "sparkles", c: true }, { t: "Biar Sakit", i: "frown", c: false }] }
+            { q: "Apa yang dapat terjadi jika luka tidak segera dirawat?", opts: [{ t: "Terjadi Infeksi", i: "skull", c: true }, { t: "Luka Cepat Sembuh", i: "smile", c: false }] },
+            { q: "Mengapa kita harus membersihkan luka dengan air bersih?", opts: [{ t: "Untuk Membunuh Kuman", i: "sparkles", c: true }, { t: "Agar Luka Semakin Sakit", i: "frown", c: false }] }
         ];
 
-        // --- AUDIO ---
         const sfx = {
             correct: document.getElementById('sfx-correct'),
             wrong: document.getElementById('sfx-wrong'),
@@ -291,67 +293,36 @@
             sfx[type].play().catch(() => {});
         }
 
-        // --- SISTEM SUARA (TTS) ---
         function speak(text) {
             if(STATE.isMuted) return;
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
                 const voices = window.speechSynthesis.getVoices();
-                let selectedVoice = voices.find(v => 
-                    v.lang.includes('id') && 
-                    (v.name.toLowerCase().includes('gadis') || v.name.toLowerCase().includes('female'))
-                );
-                if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('id') && v.name.toLowerCase().includes('google'));
+                let selectedVoice = voices.find(v => v.lang.includes('id') && (v.name.toLowerCase().includes('gadis') || v.name.toLowerCase().includes('female')));
                 if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('id'));
                 if (selectedVoice) utterance.voice = selectedVoice;
                 utterance.lang = 'id-ID';
-                utterance.rate = 1.0; 
-                utterance.pitch = 1.4; 
+                utterance.rate = 0.95; 
+                utterance.pitch = 1.3; 
                 window.speechSynthesis.speak(utterance);
             }
-        }
-
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.onvoiceschanged = () => {
-                window.speechSynthesis.getVoices();
-            };
         }
 
         function toggleMute() {
             STATE.isMuted = !STATE.isMuted;
             const icon = document.getElementById('mute-icon');
-            if(STATE.isMuted) {
-                icon.setAttribute('data-lucide', 'volume-x');
-                window.speechSynthesis.cancel();
-            } else {
-                icon.setAttribute('data-lucide', 'volume-2');
-            }
+            icon.setAttribute('data-lucide', STATE.isMuted ? 'volume-x' : 'volume-2');
+            if(STATE.isMuted) window.speechSynthesis.cancel();
             lucide.createIcons();
         }
 
-        // --- PANDUAN MODAL LOGIC ---
-        function openPanduan() {
-            playSfx('click');
-            document.getElementById('guide-modal').classList.remove('hidden');
-        }
+        function openPanduan() { playSfx('click'); document.getElementById('guide-modal').classList.remove('hidden'); }
+        function closePanduan() { playSfx('click'); document.getElementById('guide-modal').classList.add('hidden'); }
 
-        function closePanduan() {
-            playSfx('click');
-            document.getElementById('guide-modal').classList.add('hidden');
-        }
+        window.handleImageError = (el) => { el.style.display = 'none'; if (el.nextElementSibling) el.nextElementSibling.style.display = 'block'; };
+        window.handleWoundError = (el) => { el.parentElement.innerHTML = '<div class="text-2xl font-black text-orange-300 uppercase text-center">Ilustrasi Luka</div>'; };
 
-        // --- GLOBAL ERROR HANDLERS ---
-        window.handleImageError = (el) => {
-            el.style.display = 'none';
-            if (el.nextElementSibling) el.nextElementSibling.style.display = 'block';
-        };
-
-        window.handleWoundError = (el) => {
-            el.parentElement.innerHTML = '<div class="text-2xl font-black text-blue-300 uppercase text-center">Gambar Luka</div>';
-        };
-
-        // --- RENDER ---
         const app = document.getElementById('app');
         const avatarContainer = document.getElementById('avatar-container');
         const victoryModal = document.getElementById('victory-modal');
@@ -361,7 +332,6 @@
 
         function render() {
             app.innerHTML = '';
-            
             if (STATE.screen === 'intro') {
                 document.getElementById('mute-btn').classList.add('hidden');
                 document.getElementById('guide-btn').classList.add('hidden');
@@ -370,21 +340,17 @@
                 renderMonitoringHeader();
                 document.getElementById('mute-btn').classList.remove('hidden');
                 document.getElementById('guide-btn').classList.remove('hidden');
-                
                 const wrapper = document.createElement('div');
                 wrapper.className = "flex-1 overflow-y-auto no-scrollbar w-full h-full pt-20"; 
-                wrapper.id = "main-content";
-                
                 const content = document.createElement('div');
                 content.className = "p-6 pb-32"; 
-                
                 if (STATE.screen === 'menu') renderMenu(content);
                 else if (STATE.screen === 'level_select') renderLevelSelect(content);
                 else if (STATE.screen === 'materi') renderMateri(content);
                 else if (STATE.screen === 'game') renderGame(content);
                 else if (STATE.screen === 'reflection') renderReflection(content);
                 else if (STATE.screen === 'final_score') renderFinalScore(content);
-
+                else if (STATE.screen === 'relaxation') renderRelaxation(content);
                 wrapper.appendChild(content);
                 app.appendChild(wrapper);
             }
@@ -399,32 +365,27 @@
                 void avatarBubble.offsetWidth; 
                 avatarBubble.classList.add('animate-pop-in');
                 speak(text);
-            } else {
-                avatarBubble.classList.add('hidden');
-            }
+            } else { avatarBubble.classList.add('hidden'); }
         }
 
         function toggleAvatar() {
             STATE.isAvatarVisible = !STATE.isAvatarVisible;
-            if (STATE.isAvatarVisible) {
-                avatarContainer.classList.remove('avatar-hidden');
-            } else {
-                avatarContainer.classList.add('avatar-hidden');
-            }
+            avatarContainer.classList.toggle('avatar-hidden', !STATE.isAvatarVisible);
         }
 
         function renderMonitoringHeader() {
-            const progress = (STATE.completedLevels.length / 4) * 100;
+            const levelCount = STATE.completedLevels.length;
+            const progress = (levelCount / 4) * 100;
             const el = document.createElement('div');
-            el.className = "absolute top-0 left-0 right-0 z-40 px-4 pt-4 pb-2 bg-gradient-to-b from-blue-50 via-blue-50/90 to-transparent";
+            el.className = "absolute top-0 left-0 right-0 z-40 px-4 pt-4 pb-2 bg-gradient-to-b from-[#FFF7ED] via-[#FFF7ED]/90 to-transparent";
             el.innerHTML = `
-                <div class="bg-white rounded-2xl shadow-lg border-2 border-blue-100 p-3 flex items-center justify-between gap-3">
-                    <button onclick="navigate('menu')" class="bg-blue-50 text-blue-600 p-2 rounded-xl hover:bg-blue-100 active:scale-95 transition-all border border-blue-100"><i data-lucide="home" class="w-6 h-6"></i></button>
+                <div class="bg-white rounded-2xl shadow-lg border-2 border-[#A7F3D0] p-3 flex items-center justify-between gap-3">
+                    <button onclick="navigate('menu')" class="bg-[#FFF7ED] text-[#1F2937] p-2 rounded-xl hover:bg-[#A7F3D0] active:scale-95 transition-all border border-[#A7F3D0]"><i data-lucide="home" class="w-6 h-6"></i></button>
                     <div class="flex-1 flex flex-col justify-center">
-                        <div class="flex justify-between items-end mb-1 px-1"><span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">PROGRES</span><span class="text-[10px] font-bold text-blue-600">${STATE.completedLevels.length}/4</span></div>
-                        <div class="w-full h-4 bg-gray-100 rounded-full overflow-hidden border border-gray-200"><div class="h-full bg-green-500 progress-striped transition-all duration-500" style="width: ${progress}%"></div></div>
+                        <div class="flex justify-between items-end mb-1 px-1"><span class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">KEMAJUAN</span><span class="text-[10px] font-bold text-[#38BDF8]">${levelCount}/4</span></div>
+                        <div class="w-full h-4 bg-gray-100 rounded-full overflow-hidden border border-gray-200"><div class="h-full bg-[#38BDF8] progress-striped transition-all duration-500" style="width: ${progress}%"></div></div>
                     </div>
-                    <div class="flex flex-col items-center bg-yellow-50 px-3 py-1 rounded-xl border border-yellow-200 min-w-[60px]"><span class="text-[8px] font-bold text-yellow-600 uppercase mb-0.5">SCORE</span><div class="flex items-center gap-1"><i data-lucide="star" class="text-yellow-500 w-4 h-4 fill-current"></i><span class="font-black text-yellow-700 text-lg leading-none">${STATE.score}</span></div></div>
+                    <div class="flex flex-col items-center bg-[#A7F3D0]/20 px-3 py-1 rounded-xl border border-[#A7F3D0] min-w-[60px]"><span class="text-[8px] font-bold text-[#1F2937] uppercase mb-0.5">SKOR</span><div class="flex items-center gap-1"><i data-lucide="star" class="text-orange-400 w-4 h-4 fill-current"></i><span class="font-black text-[#1F2937] text-lg leading-none">${STATE.score}</span></div></div>
                 </div>`;
             app.appendChild(el);
         }
@@ -432,209 +393,135 @@
         function showVictory() {
             victoryName.innerText = STATE.name || "Teman";
             victoryModal.classList.remove('hidden');
-            lucide.createIcons();
             playSfx('victory');
-            updateAvatar('excited', 'HORE! KAMU HEBAT!');
-            if (!STATE.isAvatarVisible) toggleAvatar();
+            updateAvatar('excited', 'Hebat! Anda berhasil menyelesaikan tugas ini dengan benar!');
         }
 
         function closeVictory() {
             playSfx('click');
             victoryModal.classList.add('hidden');
-            if(STATE.currentLevel === 4) navigate('reflection');
-            else navigate('level_select');
+            navigate(STATE.currentLevel === 4 ? 'reflection' : 'level_select');
         }
 
-        // --- LAYAR-LAYAR ---
         function renderIntro() {
             const el = document.createElement('div');
             el.className = "flex flex-col items-center justify-center h-full p-6 text-center";
             el.innerHTML = `
-                <div class="w-28 h-28 bg-white rounded-full shadow-lg flex items-center justify-center mb-6 animate-bounce-slow border-4 border-blue-100"><i data-lucide="heart-handshake" class="w-14 h-14 text-pink-500"></i></div>
-                <h1 class="text-3xl font-extrabold text-blue-600 mb-2">Merawat Luka</h1>
-                <p class="text-gray-500 mb-8 font-medium">Belajar menjadi penolong cilik!</p>
-                <div class="w-full max-w-xs bg-white p-6 rounded-3xl shadow-xl border border-blue-50">
-                    <label class="block text-left text-xs font-bold text-gray-400 mb-2 ml-1 uppercase">Siapa Namamu?</label>
-                    <input type="text" id="inputName" class="w-full bg-blue-50 border-2 border-blue-100 rounded-xl p-3 text-center text-lg font-bold text-blue-800 focus:outline-none focus:border-blue-400 placeholder-blue-200" placeholder="Ketik nama...">
-                    <button id="btnStart" class="mt-6 w-full bg-blue-500 text-white font-bold py-3 rounded-xl shadow-lg flex items-center justify-center gap-2 opacity-50 cursor-not-allowed transition-all" disabled>MULAI <i data-lucide="play-circle" class="w-5 h-5"></i></button>
+                <div class="w-28 h-28 bg-white rounded-full shadow-lg flex items-center justify-center mb-6 animate-bounce-slow border-4 border-[#A7F3D0]"><i data-lucide="heart-handshake" class="w-14 h-14 text-orange-300"></i></div>
+                <h1 class="text-3xl font-extrabold text-[#1F2937] mb-2">Merawat Luka</h1>
+                <p class="text-[#6B7280] mb-8 font-medium">Belajar merawat luka sendiri!</p>
+                <div class="w-full max-w-xs bg-white p-6 rounded-3xl shadow-xl border border-orange-50">
+                    <label class="block text-left text-xs font-bold text-[#6B7280] mb-2 ml-1 uppercase">Siapa Nama Anda?</label>
+                    <input type="text" id="inputName" class="w-full bg-[#FFF7ED] border-2 border-[#A7F3D0] rounded-xl p-3 text-center text-lg font-bold text-[#1F2937] focus:outline-none focus:border-[#38BDF8] placeholder-orange-200" placeholder="Masukkan nama...">
+                    <button id="btnStart" class="mt-6 w-full bg-[#38BDF8] text-white font-bold py-3 rounded-xl shadow-lg flex items-center justify-center gap-2 opacity-50 cursor-not-allowed transition-all uppercase" disabled>Mulai <i data-lucide="play-circle" class="w-5 h-5"></i></button>
                 </div>`;
             app.appendChild(el);
-
             const input = document.getElementById('inputName');
             const btn = document.getElementById('btnStart');
             input.addEventListener('input', () => {
-                if(input.value.trim().length > 0) {
-                    btn.disabled = false;
-                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
-                } else {
-                    btn.disabled = true;
-                    btn.classList.add('opacity-50', 'cursor-not-allowed');
-                }
+                const isValid = input.value.trim().length > 0;
+                btn.disabled = !isValid;
+                btn.classList.toggle('opacity-50', !isValid);
+                btn.classList.toggle('cursor-not-allowed', !isValid);
             });
-            
-            btn.onclick = () => {
-                playSfx('click');
-                STATE.name = input.value;
-                navigate('menu');
-                updateAvatar('happy', `Halo ${STATE.name}! Ayo belajar.`);
-            };
+            btn.onclick = () => { playSfx('click'); STATE.name = input.value; navigate('menu'); updateAvatar('happy', `Selamat datang ${STATE.name}! Mari kita mulai belajar.`); };
         }
 
         function renderMenu(container) {
             container.innerHTML = `
-                <div class="mb-4 text-center"><h2 class="text-xl font-bold text-gray-800">Halo, ${STATE.name}!</h2><p class="text-sm text-gray-400">Pilih kegiatanmu hari ini</p></div>
+                <div class="mb-4 text-center"><h2 class="text-xl font-bold text-[#1F2937]">Halo, ${STATE.name}!</h2><p class="text-sm text-[#6B7280]">Silakan pilih kegiatan hari ini</p></div>
                 <div class="grid gap-4">
-                    <button onclick="navigate('materi')" class="bg-orange-100 border-2 border-orange-200 p-4 rounded-2xl flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-sm"><div class="bg-white p-3 rounded-xl text-orange-500"><i data-lucide="book-open"></i></div><div class="text-left"><h3 class="font-bold text-orange-800 text-lg">Materi Video</h3><p class="text-xs text-orange-600">Tonton dulu yuk!</p></div></button>
-                    <button onclick="navigate('level_select')" class="bg-blue-100 border-2 border-blue-200 p-4 rounded-2xl flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-sm"><div class="bg-white p-3 rounded-xl text-blue-500"><i data-lucide="gamepad-2"></i></div><div class="text-left"><h3 class="font-bold text-blue-800 text-lg">Mulai Main</h3><p class="text-xs text-blue-600">Level 1 - 4</p></div></button>
+                    <button onclick="navigate('materi')" class="bg-[#A7F3D0]/40 border-2 border-[#A7F3D0] p-4 rounded-2xl flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-sm"><div class="bg-white p-3 rounded-xl text-[#1F2937]"><i data-lucide="book-open"></i></div><div class="text-left"><h3 class="font-bold text-[#1F2937] text-lg">Materi Video</h3><p class="text-xs text-[#6B7280] font-bold uppercase">Mari menonton!</p></div></button>
+                    <button onclick="navigate('level_select')" class="bg-[#38BDF8]/20 border-2 border-[#38BDF8] p-4 rounded-2xl flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-sm"><div class="bg-white p-3 rounded-xl text-[#38BDF8]"><i data-lucide="gamepad-2"></i></div><div class="text-left"><h3 class="font-bold text-[#1F2937] text-lg">Mulai Latihan</h3><p class="text-xs text-[#6B7280] font-bold uppercase">Tingkat 1 - 4</p></div></button>
+                    <button onclick="startRelaxationGame()" class="bg-orange-100 border-2 border-orange-200 p-4 rounded-2xl flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-sm"><div class="bg-white p-3 rounded-xl text-orange-400"><i data-lucide="wind"></i></div><div class="text-left"><h3 class="font-bold text-[#1F2937] text-lg">Pojok Relaksasi</h3><p class="text-xs text-[#6B7280] font-bold uppercase">Tetap tenang saat luka</p></div></button>
                 </div>`;
-            updateAvatar('happy', 'Pilih menu belajar atau bermain!');
+            updateAvatar('happy', 'Pilih menu belajar, bermain, atau relaksasi yang Anda inginkan.');
+        }
+
+        function startRelaxationGame() { STATE.relaxationStatus = 'ready'; STATE.breathCycle = 0; navigate('relaxation'); }
+
+        function renderRelaxation(container) {
+            if (STATE.relaxationStatus === 'ready') {
+                updateAvatar('happy', 'Mari berlatih bernapas agar tetap tenang saat terluka.');
+                container.innerHTML = `<div class="flex flex-col items-center justify-center text-center py-10"><div class="w-32 h-32 bg-orange-50 rounded-full flex items-center justify-center mb-6 shadow-lg border-4 border-white animate-bounce-slow"><i data-lucide="wind" class="w-16 h-16 text-orange-400"></i></div><h2 class="text-2xl font-black text-[#1F2937] mb-4 uppercase">Pojok Relaksasi</h2><p class="text-[#6B7280] mb-8 max-w-xs font-medium italic">"Tarik napas agar tenang, hembuskan agar rasa sakit hilang."</p><button onclick="runBreathingCycle()" class="bg-[#38BDF8] text-white font-black px-10 py-4 rounded-2xl shadow-lg border-b-4 border-blue-700 active:scale-95 transition-all uppercase text-lg">Mulai Latihan</button></div>`;
+            } else if (STATE.relaxationStatus === 'breathing') {
+                const phaseText = STATE.breathPhase === 'in' ? 'Tarik Napas...' : 'Hembuskan...';
+                const phaseColor = STATE.breathPhase === 'in' ? 'bg-[#38BDF8]' : 'bg-[#A7F3D0]';
+                container.innerHTML = `<div class="flex flex-col items-center justify-center text-center h-[50vh]"><div id="breath-circle" class="breath-circle w-48 h-48 ${phaseColor} rounded-full flex items-center justify-center text-white shadow-2xl ${STATE.breathPhase === 'in' ? 'expand' : ''}"><i data-lucide="heart" class="w-20 h-20 fill-current"></i></div><h2 class="mt-20 text-4xl font-black text-[#1F2937] uppercase tracking-widest">${phaseText}</h2><div class="mt-10 flex gap-2">${[1, 2, 3].map(i => `<div class="w-4 h-4 rounded-full ${i <= STATE.breathCycle ? 'bg-[#38BDF8]' : 'bg-gray-200'}"></div>`).join('')}</div></div>`;
+            } else if (STATE.relaxationStatus === 'finished') {
+                updateAvatar('excited', 'Hebat! Anda sekarang sudah lebih tenang.');
+                container.innerHTML = `<div class="flex flex-col items-center justify-center text-center py-10"><div class="w-32 h-32 bg-orange-100 rounded-full flex items-center justify-center mb-6 shadow-lg border-4 border-white animate-pop-in"><i data-lucide="check-circle" class="w-16 h-16 text-orange-400"></i></div><h2 class="text-2xl font-black text-[#1F2937] mb-2 uppercase tracking-tight">Selesai!</h2><p class="text-[#6B7280] mb-8 font-bold uppercase tracking-widest text-xs">Anda Sudah Lebih Tenang</p><button onclick="navigate('menu')" class="w-full bg-[#38BDF8] text-white font-black py-4 rounded-2xl shadow-lg border-b-4 border-blue-700 active:scale-95 transition-all uppercase">Kembali</button></div>`;
+            }
+            lucide.createIcons();
+        }
+
+        async function runBreathingCycle() {
+            STATE.relaxationStatus = 'breathing';
+            for (let i = 1; i <= 3; i++) {
+                STATE.breathCycle = i; STATE.breathPhase = 'in'; render(); speak("Tarik napas Anda secara perlahan."); await new Promise(r => setTimeout(r, 4500));
+                STATE.breathPhase = 'out'; render(); speak("Hembuskan napas Anda perlahan-lahan."); await new Promise(r => setTimeout(r, 4500));
+            }
+            STATE.relaxationStatus = 'finished'; STATE.score += 15; render();
         }
 
         function renderLevelSelect(container) {
-            container.innerHTML = `
-                <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Pilih Level</h2>
-                <div class="grid grid-cols-2 gap-3">
-                    ${[1,2,3,4].map(l => {
-                        const isDone = STATE.completedLevels.includes(l);
-                        return `<button onclick="startLevel(${l})" class="relative bg-white border-b-4 ${isDone ? 'border-green-200 bg-green-50' : 'border-blue-100'} p-3 rounded-2xl flex flex-col items-center justify-center gap-2 h-28 hover:border-blue-300 transition-all shadow-sm active:scale-95">
-                            ${isDone ? '<div class="absolute top-2 right-2 text-green-500"><i data-lucide="check-circle" class="w-4 h-4"></i></div>' : ''}
-                            <div class="w-8 h-8 ${isDone ? 'bg-green-100 text-green-600' : 'bg-blue-50 text-blue-600'} rounded-full flex items-center justify-center font-black text-lg">${l}</div>
-                            <span class="text-[10px] font-bold text-gray-600 uppercase text-center">${l===1?'Pilih Alat':l===2?'Urutan':l===3?'Kuis':'Simulasi'}</span>
-                        </button>`;
-                    }).join('')}
-                </div>`;
-            updateAvatar('excited', 'Pilih level yang mau kamu mainkan!');
+            container.innerHTML = `<h2 class="text-xl font-bold text-[#1F2937] mb-4 text-center">Pilih Tingkat</h2><div class="grid grid-cols-2 gap-3">${[1,2,3,4].map(l => { const isDone = STATE.completedLevels.includes(l); return `<button onclick="startLevel(${l})" class="relative bg-white border-b-4 ${isDone ? 'border-[#A7F3D0] bg-orange-50' : 'border-[#38BDF8]'} p-3 rounded-2xl flex flex-col items-center justify-center gap-2 h-28 hover:border-[#A7F3D0] transition-all shadow-sm active:scale-95">${isDone ? '<div class="absolute top-2 right-2 text-[#A7F3D0]"><i data-lucide="check-circle" class="w-4 h-4"></i></div>' : ''}<div class="w-8 h-8 ${isDone ? 'bg-[#A7F3D0] text-white' : 'bg-[#38BDF8] text-white'} rounded-full flex items-center justify-center font-black text-lg">${l}</div><span class="text-[10px] font-bold text-[#6B7280] uppercase text-center">${l===1?'Pilih Alat':l===2?'Urutan':l===3?'Kuis':'Simulasi'}</span></button>`; }).join('')}</div>`;
+            updateAvatar('excited', 'Silakan pilih tingkat yang ingin Anda mainkan.');
         }
 
         function renderMateri(container) {
-            const embedUrl = "https://www.youtube.com/embed/p7nKQH8sAfw?si=XkZqDBkOrX9K_gyY";
-            container.innerHTML = `
-                <div class="bg-black rounded-2xl aspect-video w-full mb-6 border-4 border-white shadow-lg overflow-hidden">
-                    <iframe class="w-full h-full" src="${embedUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                </div>
-                <h3 class="font-bold text-blue-800 mb-2">Langkah Perawatan:</h3>
-                <div class="space-y-2 pb-8">
-                    ${LEVEL_2_STEPS.map((s,i) => `
-                        <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-blue-50">
-                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600 text-[12px]">${i+1}</div>
-                            <span class="text-sm font-medium text-gray-600">${s.label}</span>
-                        </div>
-                    `).join('')}
-                </div>`;
-            updateAvatar('happy', 'Tonton videonya baik-baik ya!');
+            container.innerHTML = `<div class="bg-black rounded-2xl aspect-video w-full mb-6 border-4 border-white shadow-lg overflow-hidden"><iframe class="w-full h-full" src="https://www.youtube.com/embed/p7nKQH8sAfw" title="YouTube" frameborder="0" allowfullscreen></iframe></div><h3 class="font-bold text-[#1F2937] mb-2">Langkah Perawatan Luka:</h3><div class="space-y-2 pb-8">${LEVEL_2_STEPS.map((s,i) => `<div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-orange-50"><div class="w-8 h-8 bg-[#A7F3D0] rounded-full flex items-center justify-center font-bold text-[#1F2937] text-[12px]">${i+1}</div><span class="text-sm font-medium text-[#6B7280]">${s.label}</span></div>`).join('')}</div>`;
+            updateAvatar('happy', 'Perhatikan video tersebut dengan saksama.');
         }
 
-        function startLevel(lvl) {
-            playSfx('click');
-            STATE.currentLevel = lvl; 
-            STATE.selectedTools = []; 
-            STATE.orderStep = []; 
-            STATE.quizIndex = 0; 
-            STATE.woundState = 0; 
-            STATE.screen = 'game'; 
-            render();
-        }
+        function startLevel(lvl) { playSfx('click'); STATE.currentLevel = lvl; STATE.selectedTools = []; STATE.orderStep = []; STATE.quizIndex = 0; STATE.woundState = 0; STATE.screen = 'game'; render(); }
 
         function renderGame(container) {
-            let header = `<div class="flex justify-center mb-4"><div class="bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-bold tracking-wider shadow-md">LEVEL ${STATE.currentLevel}</div></div>`;
-
+            let header = `<div class="flex justify-center mb-4"><div class="bg-[#A7F3D0] text-[#1F2937] px-4 py-1 rounded-full text-xs font-bold tracking-wider shadow-md uppercase">Tingkat ${STATE.currentLevel}</div></div>`;
             if (STATE.currentLevel === 1) {
-                updateAvatar('excited', 'pilih alat alat p3k yang bener');
-                container.innerHTML = header + `
-                    <div class="grid grid-cols-2 gap-3 mb-6">${LEVEL_1_TOOLS.map(t => { 
-                        const isSel = STATE.selectedTools.includes(t.id); 
-                        return `<button onclick="toggleTool('${t.id}')" class="p-4 rounded-3xl border-2 flex flex-col items-center gap-3 transition-all active:scale-95 ${isSel ? 'bg-green-50 border-green-500' : 'bg-white border-gray-100'}">
-                            <div class="w-20 h-20 flex items-center justify-center bg-gray-50 rounded-2xl p-1">
-                                <img src="${t.img}" class="w-full h-full object-contain" onerror="handleImageError(this)">
-                                <i data-lucide="${t.iconFallback}" class="w-12 h-12 text-gray-400 hidden"></i>
-                            </div>
-                            <span class="text-sm font-bold ${isSel ? 'text-green-700' : 'text-gray-600'}">${t.name}</span>
-                        </button>`; 
-                    }).join('')}</div>
-                    <button onclick="checkLevel1()" class="w-full bg-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg border-b-4 border-blue-600 active:translate-y-1 active:border-b-0 text-lg">CEK JAWABAN</button>`;
-            } 
-            else if (STATE.currentLevel === 2) {
-                updateAvatar('happy', 'Klik alat sesuai urutan yang benar!');
-                container.innerHTML = header + `
-                    <div class="flex gap-2 justify-center mb-8 overflow-x-auto py-2 no-scrollbar">
-                        ${[0,1,2,3,4].map(i => `
-                        <div class="min-w-[85px] h-[105px] bg-blue-50 border-2 border-dashed border-blue-200 rounded-[1.5rem] flex items-center justify-center overflow-hidden p-2 shadow-inner">
-                            ${STATE.orderStep[i] ? `<img src="${STATE.orderStep[i].img}" class="w-full h-full object-contain animate-pop-in" onerror="handleImageError(this)"><i data-lucide="${STATE.orderStep[i].iconFallback}" class="hidden w-10 h-10 text-blue-600"></i>` : `<span class="text-blue-200 font-black text-2xl">${i+1}</span>`}
-                        </div>`).join('')}
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 mb-6">${LEVEL_2_STEPS.map(s => { 
-                        const used = STATE.orderStep.find(x => x.id === s.id); 
-                        return `<button onclick="addOrder('${s.id}')" ${used?'disabled':''} class="bg-white p-4 rounded-[1.5rem] border-2 border-gray-100 flex items-center gap-4 active:scale-95 shadow-sm transition-all ${used?'opacity-30 border-gray-50 bg-gray-50':''}">
-                            <div class="w-20 h-20 flex-shrink-0 flex items-center justify-center bg-blue-50/50 rounded-xl p-1">
-                                <img src="${s.img}" class="w-full h-full object-contain" onerror="handleImageError(this)">
-                                <i data-lucide="${s.iconFallback}" class="hidden w-10 h-10 text-orange-500"></i>
-                            </div>
-                            <span class="text-xs font-black text-gray-700 leading-tight">${s.label}</span>
-                        </button>`; 
-                    }).join('')}</div>
-                    <button onclick="resetOrder()" class="text-center w-full text-gray-400 text-sm font-bold uppercase tracking-widest hover:text-blue-500 transition-colors">Ulangi Urutan</button>`;
-            } 
-            else if (STATE.currentLevel === 3) {
-                updateAvatar('excited', 'Jawab pertanyaannya ya!');
+                updateAvatar('excited', 'Pilihlah alat-alat P3K yang benar.');
+                container.innerHTML = header + `<div class="grid grid-cols-2 gap-3 mb-6">${LEVEL_1_TOOLS.map(t => { const isSel = STATE.selectedTools.includes(t.id); return `<button onclick="toggleTool('${t.id}')" class="p-4 rounded-3xl border-2 flex flex-col items-center gap-3 transition-all active:scale-95 ${isSel ? 'bg-[#A7F3D0]/20 border-[#A7F3D0]' : 'bg-white border-gray-100'}"><div class="w-20 h-20 flex items-center justify-center bg-gray-50 rounded-2xl p-1"><img src="${t.img}" class="w-full h-full object-contain" onerror="handleImageError(this)"><i data-lucide="${t.iconFallback}" class="w-12 h-12 text-gray-400 hidden"></i></div><span class="text-[11px] text-center leading-tight font-bold ${isSel ? 'text-[#1F2937]' : 'text-[#6B7280]'}">${t.name}</span></button>`; }).join('')}</div><button onclick="checkLevel1()" class="w-full bg-[#38BDF8] text-white font-bold py-4 rounded-2xl shadow-lg border-b-4 border-blue-700 active:translate-y-1 active:border-b-0 text-lg uppercase">Periksa Jawaban</button>`;
+            } else if (STATE.currentLevel === 2) {
+                updateAvatar('happy', 'Klik urutan yang benar dari 1 hingga 6.');
+                container.innerHTML = header + `<div class="flex gap-2 justify-center mb-8 overflow-x-auto py-2 no-scrollbar">${[0,1,2,3,4,5].map(i => `<div class="min-w-[85px] h-[110px] bg-orange-50 border-2 border-dashed border-[#A7F3D0] rounded-[1.25rem] flex items-center justify-center overflow-hidden p-2 shadow-inner">${STATE.orderStep[i] ? `<img src="${STATE.orderStep[i].img}" class="w-full h-full object-contain animate-pop-in" onerror="handleImageError(this)"><i data-lucide="${STATE.orderStep[i].iconFallback}" class="hidden w-10 h-10 text-[#38BDF8]"></i>` : `<span class="text-orange-200 font-black text-2xl">${i+1}</span>`}</div>`).join('')}</div><div class="grid grid-cols-2 gap-4 mb-6">${LEVEL_2_STEPS.map(s => { const used = STATE.orderStep.find(x => x.id === s.id); return `<button onclick="addOrder('${s.id}')" ${used?'disabled':''} class="bg-white p-5 rounded-[2rem] border-2 border-gray-100 flex flex-col items-center gap-3 active:scale-95 shadow-md transition-all ${used?'opacity-30 border-gray-50 bg-gray-50':''}"><div class="w-24 h-24 flex-shrink-0 flex items-center justify-center bg-orange-50/50 rounded-2xl p-2 border-2 border-[#A7F3D0]"><img src="${s.img}" class="w-full h-full object-contain" onerror="handleImageError(this)"><i data-lucide="${s.iconFallback}" class="hidden w-12 h-12 text-orange-400"></i></div><span class="text-[12px] font-black text-[#1F2937] leading-tight text-center uppercase tracking-wide">${s.label}</span></button>`; }).join('')}</div><button onclick="resetOrder()" class="text-center w-full text-[#6B7280] text-sm font-bold uppercase tracking-widest hover:text-[#38BDF8] transition-colors">Ulangi Urutan</button>`;
+            } else if (STATE.currentLevel === 3) {
+                updateAvatar('excited', 'Jawablah pertanyaan berikut.');
                 const q = LEVEL_3_QUIZ[STATE.quizIndex];
-                container.innerHTML = header + `<div class="bg-white p-8 rounded-[2rem] shadow-sm border border-blue-50 mb-8 text-center"><h3 class="font-bold text-blue-900 text-xl leading-tight">${q.q}</h3></div>
-                    <div class="space-y-4">${q.opts.map(opt => `<button onclick="answerQuiz(${opt.c})" class="w-full bg-white border-2 border-gray-100 p-5 rounded-2xl flex items-center gap-5 active:scale-95 active:bg-blue-50 shadow-sm"><div class="bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center text-blue-500"><i data-lucide="${opt.i}" class="w-7 h-7"></i></div><span class="font-bold text-gray-700 text-lg">${opt.t}</span></button>`).join('')}</div>`;
-            } 
-            else if (STATE.currentLevel === 4) {
-                updateAvatar('happy', 'Seret alat ke luka di tangan!');
+                container.innerHTML = header + `<div class="bg-white p-8 rounded-[2rem] shadow-sm border border-[#A7F3D0] mb-8 text-center"><h3 class="font-bold text-[#1F2937] text-xl leading-tight">${q.q}</h3></div><div class="space-y-4">${q.opts.map(opt => `<button onclick="answerQuiz(${opt.c})" class="w-full bg-white border-2 border-gray-100 p-5 rounded-2xl flex items-center gap-5 active:scale-95 active:bg-[#A7F3D0]/20 shadow-sm"><div class="bg-orange-50 w-12 h-12 rounded-full flex items-center justify-center text-orange-400"><i data-lucide="${opt.i}" class="w-7 h-7"></i></div><span class="font-bold text-[#1F2937] text-lg">${opt.t}</span></button>`).join('')}</div>`;
+            } else if (STATE.currentLevel === 4) {
+                updateAvatar('happy', 'Seret alat P3K ke arah luka.');
                 let woundImg = 'img/karakter_luka_kotor.png';
-                if(STATE.woundState===1) woundImg = 'img/karakter_luka_bersih.png';
-                if(STATE.woundState===2) woundImg = 'img/karakter_luka_kering.png';
-                if(STATE.woundState===3) woundImg = 'img/karakter_luka_obat.png';
-                if(STATE.woundState===4) woundImg = 'img/karakter_luka_tutup.png';
-                container.innerHTML = header + `
-                    <div class="flex justify-center mb-8 mt-4"><div id="drop-zone" class="w-80 h-80 relative flex items-center justify-center transition-transform duration-300"><img src="${woundImg}" class="w-full h-full object-contain" onerror="handleWoundError(this)"></div></div>
-                    <p class="text-center text-[10px] text-gray-400 mb-3 font-bold uppercase tracking-widest">KOTAK P3K (SERET ALATNYA)</p>
-                    <div class="bg-white p-5 rounded-[2.5rem] border-2 border-blue-50 shadow-inner flex justify-around flex-wrap gap-4">
-                        ${renderDraggableTool('air', 'img/alat_air.png', 'Air')} 
-                        ${renderDraggableTool('tisu', 'img/alat_kasa.png', 'Tisu')} 
-                        ${renderDraggableTool('obat', 'img/alat_betadine.png', 'Obat')} 
-                        ${renderDraggableTool('plester', 'img/alat_plester.png', 'Plester')}
-                    </div>`;
+                if(STATE.woundState===1) woundImg = 'img/karakter_tangan_bersih.png';
+                if(STATE.woundState===2) woundImg = 'img/karakter_luka_bersih.png';
+                if(STATE.woundState===3) woundImg = 'img/karakter_luka_kering.png';
+                if(STATE.woundState===4) woundImg = 'img/karakter_luka_obat.png';
+                if(STATE.woundState===5) woundImg = 'img/karakter_luka_tutup.png';
+                if(STATE.woundState===6) woundImg = 'img/karakter_luka_plester.png';
+                container.innerHTML = header + `<div class="flex justify-center mb-8 mt-4"><div id="drop-zone" class="w-80 h-80 relative flex items-center justify-center transition-transform duration-300"><img src="${woundImg}" class="w-full h-full object-contain" onerror="handleWoundError(this)"></div></div><p class="text-center text-[10px] text-[#6B7280] mb-3 font-bold uppercase tracking-widest">Kotak Peralatan (Seret Alat)</p><div class="bg-white p-5 rounded-[2.5rem] border-2 border-[#A7F3D0] shadow-inner flex justify-around flex-wrap gap-4">${renderDraggableTool('sabun', 'img/alat_sabun.png', 'Sabun')}${renderDraggableTool('air', 'img/alat_air.png', 'Air')}${renderDraggableTool('tisu', 'img/alat_kasa.png', 'Tisu')}${renderDraggableTool('obat', 'img/alat_betadine.png', 'Obat')}${renderDraggableTool('kasa', 'img/alat_kasa_asli.png', 'Kasa')}${renderDraggableTool('plester', 'img/alat_plester.png', 'Plester')}</div>`;
                 setTimeout(initDragAndDrop, 100);
             }
         }
         
-        function renderDraggableTool(id, imgPath, label) {
-            return `<div class="draggable-item flex flex-col items-center gap-2 w-20" data-id="${id}" draggable="true">
-                <div class="w-16 h-16 bg-white rounded-2xl border-2 border-blue-50 flex items-center justify-center shadow-md p-1.5 transition-transform">
-                    <img src="${imgPath}" class="w-full h-full object-contain pointer-events-none" onerror="handleImageError(this)">
-                </div>
-                <span class="text-[10px] font-black text-gray-500 uppercase">${label}</span>
-            </div>`;
-        }
+        function renderDraggableTool(id, imgPath, label) { return `<div class="draggable-item flex flex-col items-center gap-2 w-20" data-id="${id}" draggable="true"><div class="w-16 h-16 bg-white rounded-2xl border-2 border-orange-50 flex items-center justify-center shadow-md p-1.5 transition-transform"><img src="${imgPath}" class="w-full h-full object-contain pointer-events-none" onerror="handleImageError(this)"></div><span class="text-[9px] font-black text-[#6B7280] uppercase text-center leading-none">${label}</span></div>`; }
 
         function completeLevel(lvl) { if (!STATE.completedLevels.includes(lvl)) STATE.completedLevels.push(lvl); }
-        function navigate(s) { playSfx('click'); STATE.screen = s; render(); }
-        function toggleTool(id) { 
-            playSfx('click');
-            const idx = STATE.selectedTools.indexOf(id);
-            if(idx > -1) STATE.selectedTools.splice(idx, 1); 
-            else STATE.selectedTools.push(id); 
-            render(); 
-        }
+        function navigate(s) { window.speechSynthesis.cancel(); playSfx('click'); STATE.screen = s; render(); }
+        function toggleTool(id) { playSfx('click'); const idx = STATE.selectedTools.indexOf(id); if(idx > -1) STATE.selectedTools.splice(idx, 1); else STATE.selectedTools.push(id); render(); }
         
         function checkLevel1() {
-            const correct = ['air', 'betadine', 'kasa_tisu', 'plester'];
-            const user = STATE.selectedTools;
-            const isCorrect = correct.every(v => user.includes(v)) && user.every(v => correct.includes(v));
+            const correct = ['sabun', 'air', 'betadine', 'tisu_steril', 'kasa_steril', 'plester'];
+            const isCorrect = correct.every(v => STATE.selectedTools.includes(v)) && STATE.selectedTools.every(v => correct.includes(v));
             if(isCorrect) { playSfx('correct'); STATE.score += 20; completeLevel(1); setTimeout(showVictory, 500); } 
-            else { playSfx('wrong'); updateAvatar('sad', 'ini salah okee'); }
+            else { playSfx('wrong'); updateAvatar('sad', 'Jawaban Anda belum tepat.'); }
         }
 
         function addOrder(id) {
             playSfx('click');
-            const target = LEVEL_2_STEPS[STATE.orderStep.length].id;
-            if(id === target) {
+            if(id === LEVEL_2_STEPS[STATE.orderStep.length].id) {
                 STATE.orderStep.push(LEVEL_2_STEPS.find(x => x.id === id));
-                if(STATE.orderStep.length === 5) { playSfx('correct'); STATE.score += 25; completeLevel(2); setTimeout(showVictory, 500); } 
-                else { render(); updateAvatar('happy', 'iyaa bener'); }
-            } else { playSfx('wrong'); updateAvatar('sad', 'ini salah okee'); }
+                if(STATE.orderStep.length === 6) { playSfx('correct'); STATE.score += 25; completeLevel(2); setTimeout(showVictory, 500); } 
+                else { render(); updateAvatar('happy', 'Benar, silakan lanjutkan.'); }
+            } else { playSfx('wrong'); updateAvatar('sad', 'Urutan salah.'); }
         }
 
         function resetOrder() { STATE.orderStep=[]; render(); }
@@ -642,9 +529,9 @@
         function answerQuiz(c) {
             if(c) {
                 playSfx('correct');
-                if(STATE.quizIndex < LEVEL_3_QUIZ.length-1) { STATE.quizIndex++; updateAvatar('happy', 'iyaa bener'); render(); }
+                if(STATE.quizIndex < LEVEL_3_QUIZ.length-1) { STATE.quizIndex++; updateAvatar('happy', 'Benar.'); render(); }
                 else { STATE.score+=20; completeLevel(3); setTimeout(showVictory, 500); }
-            } else { playSfx('wrong'); updateAvatar('sad', 'ini salah okee'); }
+            } else { playSfx('wrong'); updateAvatar('sad', 'Salah.'); }
         }
 
         let activeDragItem = null, cloneItem = null, touchOffsetX = 0, touchOffsetY = 0;
@@ -652,107 +539,60 @@
             const items = document.querySelectorAll('.draggable-item');
             const zone = document.getElementById('drop-zone');
             items.forEach(item => {
-                item.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', item.dataset.id); item.style.opacity = '0.5'; });
-                item.addEventListener('dragend', () => item.style.opacity = '1');
                 item.addEventListener('touchstart', handleTouchStart, {passive: false});
                 item.addEventListener('touchmove', handleTouchMove, {passive: false});
                 item.addEventListener('touchend', handleTouchEnd);
             });
-            zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drop-zone-active'); });
-            zone.addEventListener('dragleave', () => zone.classList.remove('drop-zone-active'));
-            zone.addEventListener('drop', (e) => { e.preventDefault(); zone.classList.remove('drop-zone-active'); handleDropLogic(e.dataTransfer.getData('text/plain')); });
         }
 
         function handleTouchStart(e) {
-            e.preventDefault();
-            activeDragItem = e.currentTarget;
-            cloneItem = activeDragItem.cloneNode(true);
-            cloneItem.classList.add('dragging-clone');
+            e.preventDefault(); activeDragItem = e.currentTarget; cloneItem = activeDragItem.cloneNode(true);
+            cloneItem.classList.add('dragging-clone'); document.body.appendChild(cloneItem);
             const rect = activeDragItem.getBoundingClientRect();
-            touchOffsetX = e.touches[0].clientX - rect.left;
-            touchOffsetY = e.touches[0].clientY - rect.top;
-            cloneItem.style.left = (e.touches[0].clientX - touchOffsetX) + 'px';
-            cloneItem.style.top = (e.touches[0].clientY - touchOffsetY) + 'px';
-            document.body.appendChild(cloneItem);
+            touchOffsetX = e.touches[0].clientX - rect.left; touchOffsetY = e.touches[0].clientY - rect.top;
+            cloneItem.style.left = (e.touches[0].clientX - touchOffsetX) + 'px'; cloneItem.style.top = (e.touches[0].clientY - touchOffsetY) + 'px';
             activeDragItem.style.opacity = '0.3';
         }
 
         function handleTouchMove(e) {
-            if(!activeDragItem) return;
-            e.preventDefault();
-            cloneItem.style.left = (e.touches[0].clientX - touchOffsetX) + 'px';
-            cloneItem.style.top = (e.touches[0].clientY - touchOffsetY) + 'px';
+            if(!activeDragItem) return; e.preventDefault();
+            cloneItem.style.left = (e.touches[0].clientX - touchOffsetX) + 'px'; cloneItem.style.top = (e.touches[0].clientY - touchOffsetY) + 'px';
             const zone = document.getElementById('drop-zone').getBoundingClientRect();
             const touch = e.touches[0];
-            if(touch.clientX >= zone.left && touch.clientX <= zone.right && touch.clientY >= zone.top && touch.clientY <= zone.bottom) document.getElementById('drop-zone').classList.add('drop-zone-active');
-            else document.getElementById('drop-zone').classList.remove('drop-zone-active');
+            document.getElementById('drop-zone').classList.toggle('drop-zone-active', touch.clientX >= zone.left && touch.clientX <= zone.right && touch.clientY >= zone.top && touch.clientY <= zone.bottom);
         }
 
         function handleTouchEnd(e) {
             if(!activeDragItem) return;
             const zoneRect = document.getElementById('drop-zone').getBoundingClientRect();
             const cloneRect = cloneItem.getBoundingClientRect();
-            const centerX = cloneRect.left + cloneRect.width / 2;
-            const centerY = cloneRect.top + cloneRect.height / 2;
-            if(centerX >= zoneRect.left && centerX <= zoneRect.right && centerY >= zoneRect.top && centerY <= zoneRect.bottom) handleDropLogic(activeDragItem.dataset.id);
-            cloneItem.remove();
-            activeDragItem.style.opacity = '1'; activeDragItem = null; cloneItem = null;
+            if(cloneRect.left + cloneRect.width/2 >= zoneRect.left && cloneRect.left + cloneRect.width/2 <= zoneRect.right && cloneRect.top + cloneRect.height/2 >= zoneRect.top && cloneRect.top + cloneRect.height/2 <= zoneRect.bottom) handleDropLogic(activeDragItem.dataset.id);
+            cloneItem.remove(); activeDragItem.style.opacity = '1'; activeDragItem = null; cloneItem = null;
             document.getElementById('drop-zone').classList.remove('drop-zone-active');
         }
 
         function handleDropLogic(toolId) {
             const s = STATE.woundState;
-            let success = false;
-            if (toolId === 'air' && s === 0) { STATE.woundState = 1; success = true; }
-            else if (toolId === 'tisu' && s === 1) { STATE.woundState = 2; success = true; }
-            else if (toolId === 'obat' && s === 2) { STATE.woundState = 3; success = true; }
-            else if (toolId === 'plester' && s === 3) { STATE.woundState = 4; success = true; }
-            if (success) {
-                playSfx('correct'); updateAvatar('happy', 'iyaa bener');
-                if (STATE.woundState === 4) { STATE.score += 35; completeLevel(4); setTimeout(showVictory, 500); } 
+            const order = ['sabun', 'air', 'tisu', 'obat', 'kasa', 'plester'];
+            if (toolId === order[s]) {
+                STATE.woundState++; playSfx('correct'); updateAvatar('happy', 'Benar.');
+                if (STATE.woundState === 6) { STATE.score += 35; completeLevel(4); setTimeout(showVictory, 500); } 
                 else render();
-            } else { playSfx('wrong'); updateAvatar('sad', 'ini salah okee'); }
+            } else { playSfx('wrong'); updateAvatar('sad', 'Urutan salah.'); }
         }
 
         function renderReflection(container) {
-            container.innerHTML = `
-                <h2 class="text-2xl font-bold mb-6 text-center text-blue-800">Bagaimana perasaanmu?</h2>
-                <div class="grid grid-cols-2 gap-6 w-full mb-10">
-                    <button onclick="endGame()" class="bg-green-100 p-8 rounded-[2.5rem] flex flex-col items-center gap-4 border-2 border-green-200 active:scale-95 shadow-sm">
-                        <i data-lucide="smile" class="w-16 h-16 text-green-600"></i><span class="font-bold text-green-800 text-lg">Senang</span>
-                    </button>
-                    <button onclick="endGame()" class="bg-blue-100 p-8 rounded-[2.5rem] flex flex-col items-center gap-4 border-2 border-blue-200 active:scale-95 shadow-sm">
-                        <i data-lucide="thumbs-up" class="w-16 h-16 text-blue-600"></i><span class="font-bold text-blue-800 text-lg">Bangga</span>
-                    </button>
-                </div>`;
-            updateAvatar('happy', 'Wah, kamu sudah berhasil mengobati luka!');
+            container.innerHTML = `<h2 class="text-2xl font-bold mb-6 text-center text-[#1F2937]">Bagaimana perasaan Anda?</h2><div class="grid grid-cols-2 gap-6 w-full mb-10"><button onclick="endGame()" class="bg-[#A7F3D0]/40 p-8 rounded-[2.5rem] flex flex-col items-center gap-4 border-2 border-[#A7F3D0] active:scale-95 shadow-sm"><i data-lucide="smile" class="w-16 h-16 text-orange-400"></i><span class="font-bold text-[#1F2937] text-lg">Senang</span></button><button onclick="endGame()" class="bg-[#38BDF8]/20 p-8 rounded-[2.5rem] flex flex-col items-center gap-4 border-2 border-[#38BDF8] active:scale-95 shadow-sm"><i data-lucide="thumbs-up" class="w-16 h-16 text-[#38BDF8]"></i><span class="font-bold text-[#1F2937] text-lg">Bangga</span></button></div>`;
+            updateAvatar('happy', 'Wah, Anda berhasil merawat luka dengan sangat baik!');
         }
 
         function endGame() { STATE.screen = 'final_score'; render(); }
         function renderFinalScore(container) {
             playSfx('victory');
-            const progress = (STATE.completedLevels.length / 4) * 100;
-            container.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-full text-center">
-                    <i data-lucide="trophy" class="w-28 h-28 text-yellow-500 mb-6 animate-bounce-slow"></i>
-                    <h1 class="text-4xl font-black text-yellow-700 uppercase mb-2">Luar Biasa!</h1>
-                    <p class="text-gray-500 mb-6 font-bold uppercase tracking-widest text-sm">Laporan Akhir</p>
-                    <div class="bg-white p-8 rounded-[3rem] shadow-xl border-4 border-white mb-8 w-full max-w-xs">
-                        <div class="mb-6 border-b pb-6 border-gray-100">
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Skor</span>
-                            <div class="text-6xl font-black text-blue-600 mt-2">${STATE.score}</div>
-                        </div>
-                        <div class="text-left">
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Progres Level</span>
-                            <div class="w-full h-5 bg-gray-100 rounded-full mt-3 overflow-hidden border">
-                                <div class="h-full bg-green-500 progress-striped" style="width: ${progress}%"></div>
-                            </div>
-                            <p class="text-sm text-center mt-3 font-bold text-gray-600">${STATE.completedLevels.length} dari 4 Level Selesai</p>
-                        </div>
-                    </div>
-                    <button onclick="location.reload()" class="w-full bg-blue-500 text-white font-bold py-5 rounded-[2rem] shadow-lg active:scale-95 text-xl border-b-4 border-blue-700">MAIN LAGI</button>
-                </div>`;
-            updateAvatar('excited', 'Hebat! Sekarang kamu sudah tahu cara merawat luka sendiri!');
+            const levelCount = STATE.completedLevels.length;
+            const starsHtml = Array.from({ length: 4 }, (_, i) => `<i data-lucide="star" class="w-10 h-10 ${i < levelCount ? 'text-orange-400 fill-current animate-star' : 'text-gray-200'} ml-1" style="animation-delay: ${i * 0.2}s"></i>`).join('');
+            container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-center"><div class="relative mb-6"><i data-lucide="trophy" class="w-28 h-28 text-orange-400 animate-bounce-slow"></i></div><div class="flex justify-center mb-6 bg-white/50 p-4 rounded-full border-2 border-[#A7F3D0] shadow-inner">${starsHtml}</div><h1 class="text-4xl font-black text-[#1F2937] uppercase mb-2">Luar Biasa!</h1><p class="text-[#6B7280] mb-6 font-bold uppercase tracking-widest text-sm">Laporan Akhir</p><div class="bg-white p-8 rounded-[3rem] shadow-xl border-4 border-white mb-8 w-full max-w-xs"><div class="mb-6 border-b pb-6 border-gray-100"><span class="text-xs font-bold text-[#6B7280] uppercase tracking-widest">Total Skor</span><div class="text-6xl font-black text-[#38BDF8] mt-2">${STATE.score}</div></div><div class="text-left"><span class="text-xs font-bold text-[#6B7280] uppercase tracking-widest">Kemajuan</span><div class="w-full h-5 bg-gray-100 rounded-full mt-3 overflow-hidden border"><div class="h-full bg-[#A7F3D0] progress-striped" style="width: ${(levelCount/4)*100}%"></div></div><p class="text-sm text-center mt-3 font-bold text-[#6B7280]">${levelCount} dari 4 Tingkat Selesai</p></div></div><button onclick="location.reload()" class="w-full bg-[#38BDF8] text-white font-black py-5 rounded-[2rem] shadow-lg active:scale-95 text-xl border-b-4 border-blue-700 uppercase">Mainkan Lagi</button></div>`;
+            updateAvatar('excited', `Hebat! Anda mendapatkan ${levelCount} bintang.`);
         }
         render();
     </script>
