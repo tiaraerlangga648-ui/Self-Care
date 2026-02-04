@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Merawat Luka - Si Penolong Cilik</title>
+    <title>Merawat Luka sendiri</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -216,14 +216,6 @@
                     <p class="text-xs text-red-500 bg-red-50 p-2 rounded-lg italic border border-red-100">Aplikasi tidak menggantikan perawatan medis profesional. Anak tetap harus didampingi orang dewasa. Materi difokuskan pada luka ringan.</p>
                 </section>
 
-                <div class="mt-10 pt-6 border-t-2 border-[#A7F3D0] text-center">
-                    <p class="text-[10px] text-[#6B7280] font-bold uppercase tracking-[0.2em] mb-4">Disusun Oleh:</p>
-                    <p class="text-sm font-black text-[#1F2937]">Tiara Sinta Aulia</p>
-                    <p class="text-[10px] text-[#6B7280] uppercase">Program Studi S1 Pendidikan Luar Biasa</p>
-                    <p class="text-[10px] text-[#6B7280] uppercase">Universitas Negeri Surabaya</p>
-                </div>
-            </div>
-
             <div class="p-4 bg-gray-50 border-t border-gray-100">
                 <button onclick="closePanduan()" class="w-full bg-[#38BDF8] text-white font-bold py-3 rounded-2xl shadow-lg active:scale-95 transition-all uppercase text-sm">Tutup Panduan</button>
             </div>
@@ -259,9 +251,7 @@
         };
 
         const LEVEL_1_TOOLS = [
-            { id: 'sabun', name: 'Sabun Cuci Tangan', img: 'img/alat_sabun.png', iconFallback: 'hand-metal', correct: true },
             { id: 'air', name: 'Air Bersih', img: 'img/alat_air.png', iconFallback: 'droplets', correct: true },
-            { id: 'permen', name: 'Permen', img: 'img/alat_permen.png', iconFallback: 'candy', correct: false },
             { id: 'betadine', name: 'Antiseptik', img: 'img/alat_betadine.png', iconFallback: 'flask-conical', correct: true },
             { id: 'mainan', name: 'Mainan', img: 'img/alat_mainan.png', iconFallback: 'gamepad-2', correct: false },
             { id: 'tisu_steril', name: 'Tisu Steril', img: 'img/alat_kasa.png', iconFallback: 'file-text', correct: true },
@@ -280,7 +270,7 @@
 
         const LEVEL_3_QUIZ = [
             { q: "Apa yang dapat terjadi jika luka tidak segera dirawat?", opts: [{ t: "Terjadi Infeksi", i: "skull", c: true }, { t: "Luka Cepat Sembuh", i: "smile", c: false }] },
-            { q: "Mengapa kita harus membersihkan luka dengan air bersih?", opts: [{ t: "Untuk Membunuh Kuman", i: "sparkles", c: true }, { t: "Agar Luka Semakin Sakit", i: "frown", c: false }] }
+            { q: "Mengapa kita harus membersihkan luka?", opts: [{ t: "Untuk Membunuh Kuman", i: "sparkles", c: true }, { t: "Luka Semakin Sakit", i: "frown", c: false }] }
         ];
 
         const sfx = {
@@ -441,32 +431,6 @@
             updateAvatar('happy', 'Pilih menu belajar, bermain, atau relaksasi yang Anda inginkan.');
         }
 
-        function startRelaxationGame() { STATE.relaxationStatus = 'ready'; STATE.breathCycle = 0; navigate('relaxation'); }
-
-        function renderRelaxation(container) {
-            if (STATE.relaxationStatus === 'ready') {
-                updateAvatar('happy', 'Mari berlatih bernapas agar tetap tenang saat terluka.');
-                container.innerHTML = `<div class="flex flex-col items-center justify-center text-center py-10"><div class="w-32 h-32 bg-orange-50 rounded-full flex items-center justify-center mb-6 shadow-lg border-4 border-white animate-bounce-slow"><i data-lucide="wind" class="w-16 h-16 text-orange-400"></i></div><h2 class="text-2xl font-black text-[#1F2937] mb-4 uppercase">Pojok Relaksasi</h2><p class="text-[#6B7280] mb-8 max-w-xs font-medium italic">"Tarik napas agar tenang, hembuskan agar rasa sakit hilang."</p><button onclick="runBreathingCycle()" class="bg-[#38BDF8] text-white font-black px-10 py-4 rounded-2xl shadow-lg border-b-4 border-blue-700 active:scale-95 transition-all uppercase text-lg">Mulai Latihan</button></div>`;
-            } else if (STATE.relaxationStatus === 'breathing') {
-                const phaseText = STATE.breathPhase === 'in' ? 'Tarik Napas...' : 'Hembuskan...';
-                const phaseColor = STATE.breathPhase === 'in' ? 'bg-[#38BDF8]' : 'bg-[#A7F3D0]';
-                container.innerHTML = `<div class="flex flex-col items-center justify-center text-center h-[50vh]"><div id="breath-circle" class="breath-circle w-48 h-48 ${phaseColor} rounded-full flex items-center justify-center text-white shadow-2xl ${STATE.breathPhase === 'in' ? 'expand' : ''}"><i data-lucide="heart" class="w-20 h-20 fill-current"></i></div><h2 class="mt-20 text-4xl font-black text-[#1F2937] uppercase tracking-widest">${phaseText}</h2><div class="mt-10 flex gap-2">${[1, 2, 3].map(i => `<div class="w-4 h-4 rounded-full ${i <= STATE.breathCycle ? 'bg-[#38BDF8]' : 'bg-gray-200'}"></div>`).join('')}</div></div>`;
-            } else if (STATE.relaxationStatus === 'finished') {
-                updateAvatar('excited', 'Hebat! Anda sekarang sudah lebih tenang.');
-                container.innerHTML = `<div class="flex flex-col items-center justify-center text-center py-10"><div class="w-32 h-32 bg-orange-100 rounded-full flex items-center justify-center mb-6 shadow-lg border-4 border-white animate-pop-in"><i data-lucide="check-circle" class="w-16 h-16 text-orange-400"></i></div><h2 class="text-2xl font-black text-[#1F2937] mb-2 uppercase tracking-tight">Selesai!</h2><p class="text-[#6B7280] mb-8 font-bold uppercase tracking-widest text-xs">Anda Sudah Lebih Tenang</p><button onclick="navigate('menu')" class="w-full bg-[#38BDF8] text-white font-black py-4 rounded-2xl shadow-lg border-b-4 border-blue-700 active:scale-95 transition-all uppercase">Kembali</button></div>`;
-            }
-            lucide.createIcons();
-        }
-
-        async function runBreathingCycle() {
-            STATE.relaxationStatus = 'breathing';
-            for (let i = 1; i <= 3; i++) {
-                STATE.breathCycle = i; STATE.breathPhase = 'in'; render(); speak("Tarik napas Anda secara perlahan."); await new Promise(r => setTimeout(r, 4500));
-                STATE.breathPhase = 'out'; render(); speak("Hembuskan napas Anda perlahan-lahan."); await new Promise(r => setTimeout(r, 4500));
-            }
-            STATE.relaxationStatus = 'finished'; STATE.score += 15; render();
-        }
-
         function renderLevelSelect(container) {
             container.innerHTML = `<h2 class="text-xl font-bold text-[#1F2937] mb-4 text-center">Pilih Tingkat</h2><div class="grid grid-cols-2 gap-3">${[1,2,3,4].map(l => { const isDone = STATE.completedLevels.includes(l); return `<button onclick="startLevel(${l})" class="relative bg-white border-b-4 ${isDone ? 'border-[#A7F3D0] bg-orange-50' : 'border-[#38BDF8]'} p-3 rounded-2xl flex flex-col items-center justify-center gap-2 h-28 hover:border-[#A7F3D0] transition-all shadow-sm active:scale-95">${isDone ? '<div class="absolute top-2 right-2 text-[#A7F3D0]"><i data-lucide="check-circle" class="w-4 h-4"></i></div>' : ''}<div class="w-8 h-8 ${isDone ? 'bg-[#A7F3D0] text-white' : 'bg-[#38BDF8] text-white'} rounded-full flex items-center justify-center font-black text-lg">${l}</div><span class="text-[10px] font-bold text-[#6B7280] uppercase text-center">${l===1?'Pilih Alat':l===2?'Urutan':l===3?'Kuis':'Simulasi'}</span></button>`; }).join('')}</div>`;
             updateAvatar('excited', 'Silakan pilih tingkat yang ingin Anda mainkan.');
@@ -601,3 +565,4 @@
     </script>
 </body>
 </html>
+
