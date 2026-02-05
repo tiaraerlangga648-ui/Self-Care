@@ -11,9 +11,12 @@
     <!-- Icon Library -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --app-font: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', 'Comic Neue', cursive;
+            --app-font: 'Comic Sans MS', 'Comic Sans', 'Comic Neue', cursive;
             --app-bg: #FFF7ED;
             --app-text: #1F2937;
         }
@@ -25,6 +28,7 @@
             background-color: var(--app-bg);
             color: var(--app-text);
             transition: background-color 0.3s, color 0.3s;
+            user-select: none;
         }
 
         /* Mode Warna */
@@ -32,12 +36,10 @@
         body.mode-high-contrast .bg-white { background-color: #000 !important; border-color: #FFFF00 !important; color: #FFFF00 !important; }
         body.mode-soft { background-color: #F5E6D3 !important; }
 
-        /* Ukuran Teks */
+        /* Helpers */
         .text-size-small { font-size: 0.875rem; }
         .text-size-medium { font-size: 1rem; }
         .text-size-large { font-size: 1.25rem; }
-
-        /* Optimasi Kualitas Gambar */
         img { image-rendering: high-quality; -ms-interpolation-mode: bicubic; }
 
         /* Animasi */
@@ -68,7 +70,7 @@
 
         .hd-frame { border: 8px solid white; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
         
-        /* Aset warna */
+        /* Fallback colors jika gambar tidak load */
         .asset-cuci { background-color: #E0F2FE; color: #0EA5E9; }
         .asset-air { background-color: #DBEAFE; color: #2563EB; }
         .asset-betadine { background-color: #FEF2F2; color: #DC2626; }
@@ -76,21 +78,20 @@
         .asset-kasa { background-color: #F9FAFB; color: #9CA3AF; }
         .asset-plester { background-color: #FEF3C7; color: #D97706; }
 
-        /* Panduan Styling */
         .guide-section { border-bottom: 2px dashed #A7F3D0; padding-bottom: 1rem; margin-bottom: 1rem; }
         .guide-section:last-child { border-bottom: none; }
         .guide-h2 { font-weight: 900; color: #1F2937; text-transform: uppercase; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-        .guide-h3 { font-weight: 700; color: #38BDF8; margin-top: 0.75rem; margin-bottom: 0.25rem; }
     </style>
 </head>
-<body class="h-screen w-screen overflow-hidden flex justify-center text-size-medium">
+<body class="h-screen w-screen overflow-hidden text-size-medium">
 
-    <div id="app" class="relative w-full max-w-md h-full bg-white/40 shadow-2xl flex flex-col border-x border-white overflow-hidden">
+    <!-- Container Utama: Full Width & Height, Tanpa Frame -->
+    <div id="app" class="relative w-full h-full bg-white/40 flex flex-col overflow-hidden">
         <!-- Konten via JS -->
     </div>
 
     <!-- Avatar Pendamping -->
-    <div id="avatar-container" class="fixed bottom-4 left-2 z-40 flex items-end gap-1 w-full max-w-[380px] pointer-events-none">
+    <div id="avatar-container" class="fixed bottom-4 left-4 z-40 flex items-end gap-1 w-full max-w-[380px] pointer-events-none">
         <button onclick="toggleAvatar()" class="bg-white border-2 border-[#A7F3D0] text-[#38BDF8] rounded-full p-1.5 shadow-md hover:bg-orange-50 active:scale-95 transition-all z-50 mb-4 pointer-events-auto">
             <i data-lucide="chevron-left" class="w-5 h-5 avatar-toggle-icon" id="avatar-arrow"></i>
         </button>
@@ -98,14 +99,19 @@
             <div id="avatar-bubble" class="bg-white p-3 rounded-2xl rounded-bl-none shadow-lg border-2 border-[#A7F3D0] mb-1 relative max-w-[220px] animate-pop-in hidden">
                 <p id="avatar-text" class="text-[#1F2937] font-bold text-sm leading-tight"></p>
             </div>
-            <div id="avatar-bear" class="w-20 h-20 bg-white rounded-full border-4 border-white shadow-xl flex items-center justify-center overflow-hidden animate-bounce-slow cursor-pointer pointer-events-auto" onclick="toggleAvatar()">
-                <div class="bg-orange-100 w-full h-full flex items-center justify-center">
-                    <i data-lucide="user" class="w-12 h-12 text-orange-400"></i>
+            <!-- Avatar Image / Bear Placeholder -->
+            <div id="avatar-bear" class="w-24 h-24 bg-transparent flex items-end justify-center animate-bounce-slow cursor-pointer pointer-events-auto transition-transform hover:scale-105" onclick="toggleAvatar()">
+                <img src="img/tiara.png" alt="Tiara" class="w-full h-full object-contain drop-shadow-xl" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                <div class="hidden w-20 h-20 bg-white rounded-full border-4 border-white shadow-xl items-center justify-center overflow-hidden">
+                    <div class="bg-orange-100 w-full h-full flex items-center justify-center">
+                        <i data-lucide="user" class="w-12 h-12 text-orange-400"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- MODAL SETTINGS & GUIDE SAMA SEPERTI SEBELUMNYA, DIPERSINGKAT UNTUK FOKUS PADA LOGIKA -->
     <!-- MODAL PENGATURAN -->
     <div id="settings-modal" class="hidden fixed inset-0 z-[120] bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
         <div id="settings-card" class="bg-white rounded-[3rem] w-full max-w-md max-h-[90vh] flex flex-col shadow-2xl animate-pop-in overflow-hidden border-4 border-orange-200">
@@ -133,34 +139,124 @@
                 </div>
                 <button onclick="closePanduan()" class="bg-white p-1 rounded-full text-[#6B7280] hover:text-red-500 shadow-sm"><i data-lucide="x"></i></button>
             </div>
-            
             <div class="p-6 overflow-y-auto no-scrollbar text-sm text-[#1F2937] leading-relaxed">
                 <div class="text-center mb-6">
-                    <h1 class="text-xl font-black uppercase text-[#1F2937]">Buku Penggunaan Aplikasi</h1>
+                    <h1 class="text-xl font-black uppercase text-[#1F2937]">BUKU PENGGUNAAN APLIKASI</h1>
                     <p class="text-blue-500 font-bold">Gamifikasi Pembelajaran Self Care (Perawatan Luka)</p>
                     <p class="text-[10px] text-gray-400 italic">Untuk Orang Tua Murid dan Guru/Terapis</p>
                 </div>
 
                 <div class="guide-section">
                     <h2 class="guide-h2"><span class="bg-[#A7F3D0] w-6 h-6 rounded-full flex items-center justify-center text-xs">A</span> Pendahuluan</h2>
-                    <p class="text-xs">Aplikasi <b>Gamifikasi Pembelajaran Self Care (Perawatan Luka)</b> dikembangkan untuk membantu peserta didik disabilitas intelektual ringan dalam mempelajari keterampilan perawatan luka secara mandiri, aman, dan menyenangkan.</p>
+                    <p class="text-xs">Aplikasi Gamifikasi Pembelajaran Self Care (Perawatan Luka) dirancang untuk membantu peserta didik disabilitas intelektual ringan mempelajari perawatan luka secara aman, mandiri, dan menyenangkan melalui permainan edukatif berbasis gamifikasi dan model pembelajaran kontekstual.</p>
+                    <p class="text-xs mt-2">Buku ini menjadi panduan singkat bagi orang tua dan guru/terapis dalam mendampingi penggunaan aplikasi.</p>
                 </div>
 
                 <div class="guide-section">
                     <h2 class="guide-h2"><span class="bg-[#A7F3D0] w-6 h-6 rounded-full flex items-center justify-center text-xs">B</span> Sasaran Pengguna</h2>
-                    <ul class="list-disc pl-5 text-xs">
+                    <ul class="list-disc pl-5 text-xs space-y-1">
                         <li>Peserta didik disabilitas intelektual ringan</li>
-                        <li>Orang tua/wali murid sebagai pendamping</li>
-                        <li>Guru/Terapis sebagai fasilitator</li>
+                        <li>Orang tua/wali murid</li>
+                        <li>Guru/Terapis</li>
                     </ul>
                 </div>
 
                 <div class="guide-section">
-                    <h2 class="guide-h2 text-red-500"><span class="bg-red-100 w-6 h-6 rounded-full flex items-center justify-center text-xs text-red-500">H</span> Keamanan & Etika</h2>
-                    <p class="text-[11px] italic">Aplikasi tidak menggantikan perawatan medis profesional. Anak harus selalu didampingi orang dewasa.</p>
+                    <h2 class="guide-h2"><span class="bg-[#A7F3D0] w-6 h-6 rounded-full flex items-center justify-center text-xs">C</span> Tujuan Penggunaan</h2>
+                    <ul class="list-disc pl-5 text-xs space-y-1">
+                        <li>Memahami langkah dasar perawatan luka</li>
+                        <li>Meningkatkan kemandirian self care</li>
+                        <li>Meningkatkan motivasi belajar</li>
+                    </ul>
+                </div>
+
+                <div class="guide-section">
+                    <h2 class="guide-h2"><span class="bg-[#A7F3D0] w-6 h-6 rounded-full flex items-center justify-center text-xs">D</span> Perangkat dan Akses</h2>
+                    <p class="text-xs">Aplikasi berbasis web dan dapat diakses melalui komputer, laptop, tablet, atau smartphone dengan koneksi internet dan browser.</p>
+                </div>
+
+                <div class="guide-section">
+                    <h2 class="guide-h2"><span class="bg-[#A7F3D0] w-6 h-6 rounded-full flex items-center justify-center text-xs">E</span> Fitur Utama Aplikasi</h2>
+                    <div class="space-y-3 mt-2">
+                        <div>
+                            <h3 class="font-bold text-xs text-[#38BDF8]">1. Halaman Awal</h3>
+                            <ul class="list-disc pl-5 text-[11px] text-gray-600">
+                                <li>Ilustrasi pembuka</li>
+                                <li>Kolom nama pengguna</li>
+                                <li>Tombol Play</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-xs text-[#38BDF8]">2. Menu Utama</h3>
+                            <ul class="list-disc pl-5 text-[11px] text-gray-600">
+                                <li>Materi</li>
+                                <li>Level 1–4</li>
+                                <li>Score & Progress</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-xs text-[#38BDF8]">3. Materi (Modeling)</h3>
+                            <ul class="list-disc pl-5 text-[11px] text-gray-600">
+                                <li>Video perawatan luka</li>
+                                <li>Penjelasan alat dan langkah dasar</li>
+                                <li>Reward verbal setelah selesai</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-xs text-[#38BDF8]">4. Level Pembelajaran</h3>
+                            <ul class="list-disc pl-5 text-[11px] text-gray-600">
+                                <li><b>Level 1:</b> Memilih alat perawatan luka</li>
+                                <li><b>Level 2:</b> Mengurutkan langkah perawatan luka</li>
+                                <li><b>Level 3:</b> Menjawab pertanyaan sederhana</li>
+                                <li><b>Level 4:</b> Simulasi perawatan luka (drag & drop)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-xs text-[#38BDF8]">5. Refleksi & Progres</h3>
+                            <ul class="list-disc pl-5 text-[11px] text-gray-600">
+                                <li>Pilihan emotikon perasaan</li>
+                                <li>Tampilan skor, progres, dan pujian dari avatar</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="guide-section">
+                    <h2 class="guide-h2"><span class="bg-[#A7F3D0] w-6 h-6 rounded-full flex items-center justify-center text-xs">F</span> Panduan Singkat Pendampingan</h2>
+                    <div class="mt-2 space-y-2">
+                        <div class="bg-orange-50 p-3 rounded-xl border border-orange-100">
+                            <h3 class="font-black text-xs text-orange-400 uppercase mb-1">Orang Tua</h3>
+                            <ul class="list-disc pl-4 text-[11px] space-y-1">
+                                <li>Dampingi tanpa mengambil alih</li>
+                                <li>Gunakan bahasa sederhana</li>
+                                <li>Beri pujian dan penguatan positif</li>
+                            </ul>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                            <h3 class="font-black text-xs text-blue-400 uppercase mb-1">Guru/Terapis</h3>
+                            <ul class="list-disc pl-4 text-[11px] space-y-1">
+                                <li>Gunakan sebagai media pembelajaran</li>
+                                <li>Dampingi dan amati progres anak</li>
+                                <li>Diskusikan hasil belajar secara singkat</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="guide-section">
+                    <h2 class="guide-h2 text-red-500"><span class="bg-red-100 w-6 h-6 rounded-full flex items-center justify-center text-xs text-red-500">G</span> Keamanan</h2>
+                    <ul class="list-disc pl-5 text-xs text-red-500 font-bold space-y-1">
+                        <li>Tidak menggantikan perawatan medis</li>
+                        <li>Digunakan untuk luka ringan</li>
+                        <li>Anak harus tetap didampingi</li>
+                    </ul>
+                </div>
+
+                <div class="guide-section border-none">
+                    <h2 class="guide-h2"><span class="bg-[#A7F3D0] w-6 h-6 rounded-full flex items-center justify-center text-xs">H</span> Penutup</h2>
+                    <p class="text-xs">Aplikasi ini diharapkan membantu peserta didik disabilitas intelektual ringan belajar perawatan luka secara bermakna, menyenangkan, dan aplikatif dengan dukungan orang tua serta guru/terapis.</p>
                 </div>
             </div>
-
             <div class="p-4 bg-gray-50 border-t border-gray-100">
                 <button onclick="closePanduan()" class="w-full bg-[#38BDF8] text-white font-black py-3 rounded-2xl shadow-lg uppercase text-sm">Tutup Panduan</button>
             </div>
@@ -185,77 +281,75 @@
             volume: 'medium', voiceSpeed: 'normal'
         };
 
+        // --- KONFIGURASI ASET GAMBAR ---
         const ASSETS = {
-            'cuci': { icon: 'hand', color: 'asset-cuci', label: 'Mencuci Tangan' },
-            'air': { icon: 'droplets', color: 'asset-air', label: 'Air Bersih' },
-            'betadine': { icon: 'flask-conical', color: 'asset-betadine', label: 'Antiseptik' },
-            'tisu_steril': { icon: 'file-text', color: 'asset-tisu', label: 'Tisu Steril' },
-            'kasa_steril': { icon: 'square', color: 'asset-kasa', label: 'Kasa Steril' },
-            'plester': { icon: 'bandage', color: 'asset-plester', label: 'Plester' },
-            'mainan': { icon: 'gamepad-2', color: 'bg-gray-100', label: 'Mainan' }
+            'cuci': { img: null, icon: 'hand', color: 'asset-cuci', label: 'Mencuci Tangan' }, // Alat sabun (opsional/default icon)
+            'air': { img: 'img/alat_air.png', icon: 'droplets', color: 'asset-air', label: 'Air Bersih' },
+            'betadine': { img: 'img/alat_betadine.png', icon: 'flask-conical', color: 'asset-betadine', label: 'Antiseptik' },
+            // Perhatikan pemetaan: Tisu Steril menggunakan img/alat_kasa.png sesuai instruksi
+            'tisu_steril': { img: 'img/alat_kasa.png', icon: 'file-text', color: 'asset-tisu', label: 'Tisu Steril' },
+            // Perhatikan pemetaan: Kasa Steril menggunakan img/alat_kasa_asli.png sesuai instruksi
+            'kasa_steril': { img: 'img/alat_kasa_asli.png', icon: 'square', color: 'asset-kasa', label: 'Kasa Steril' },
+            'plester': { img: 'img/alat_plester.png', icon: 'bandage', color: 'asset-plester', label: 'Plester' },
+            'mainan': { img: 'img/alat_mainan.png', icon: 'gamepad-2', color: 'bg-gray-100', label: 'Mainan' }
         };
 
+        // --- GAMBAR LANGKAH-LANGKAH (TINGKAT 2) ---
         const LEVEL_2_STEPS = [
-            { id: 'cuci', label: 'Mencuci Tangan', icon: 'hand' },
-            { id: 'air', label: 'Membersihkan Luka', icon: 'droplets' },
-            { id: 'kering', label: 'Mengeringkan Luka', icon: 'file-text' },
-            { id: 'obat', label: 'Meneteskan Obat', icon: 'flask-conical' },
-            { id: 'tutup', label: 'Menutup Luka', icon: 'square' },
-            { id: 'plester', label: 'Merekatkan Plester', icon: 'bandage' }
+            { id: 'cuci', label: 'Mencuci Tangan', img: 'img/langkah_cuci.png', icon: 'hand' },
+            { id: 'air', label: 'Membersihkan Luka', img: 'img/langkah_air.png', icon: 'droplets' },
+            { id: 'kering', label: 'Mengeringkan Luka', img: 'img/langkah_kering.png', icon: 'file-text' },
+            { id: 'obat', label: 'Meneteskan Obat', img: 'img/langkah_obat.png', icon: 'flask-conical' },
+            { id: 'tutup', label: 'Menutup Luka', img: 'img/langkah_tutup.png', icon: 'square' },
+            { id: 'plester', label: 'Merekatkan Plester', img: 'img/langkah_plester.png', icon: 'bandage' }
         ];
 
+        // --- KONFIGURASI LEVEL 1 (ALAT) ---
         const LEVEL_1_TOOLS = [
             { id: 'air', correct: true }, { id: 'betadine', correct: true },
             { id: 'mainan', correct: false }, { id: 'tisu_steril', correct: true },
             { id: 'kasa_steril', correct: true }, { id: 'plester', correct: true }
         ];
 
+        // --- KUIS LEVEL 3 ---
         const LEVEL_3_QUIZ = [
-            { q: "Apa yang harus kita lakukan sebelum menyentuh luka?", opts: [{ t: "Mencuci Tangan", c: true }, { t: "Langsung Menempel Plester", c: false }] },
-            { q: "Alat apa yang digunakan untuk merekatkan kasa pada luka?", opts: [{ t: "Plester", c: true }, { t: "Lem Kertas", c: false }] }
+            { 
+                q: "Apa yang terjadi jika luka tidak dirawat?", 
+                opts: [
+                    { t: "Terjadi infeksi", c: true }, 
+                    { t: "Luka sembuh dengan baik", c: false } // Diubah menjadi pengecoh
+                ] 
+            },
+            { 
+                q: "Mengapa luka harus dibersihkan?", 
+                opts: [
+                    { t: "Agar kuman atau bakteri mati", c: true }, 
+                    { t: "Agar sakit", c: false }
+                ] 
+            }
         ];
 
-        // --- Fungsi Audio (Diperbarui untuk Suara Perempuan) ---
+        // --- FUNGSI AUDIO ---
         function speak(text) {
             if(!STATE.narration) return;
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const ut = new SpeechSynthesisUtterance(text);
-                
-                // Mendapatkan daftar suara yang tersedia di perangkat
                 const voices = window.speechSynthesis.getVoices();
-                
-                // Mencari suara perempuan Indonesia dengan kriteria yang lebih ketat
                 let selectedVoice = voices.find(v => v.lang.startsWith('id') && 
-                    (v.name.toLowerCase().includes('female') || 
-                     v.name.toLowerCase().includes('perempuan') || 
-                     v.name.toLowerCase().includes('gadis') ||
-                     v.name.toLowerCase().includes('google') || // Google voices id-ID biasanya perempuan
-                     v.name.toLowerCase().includes('santi') ||
-                     v.name.toLowerCase().includes('damayanti')));
-                
-                // Jika tidak ditemukan suara perempuan id-ID, cari id-ID apa saja
+                    (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('perempuan') || v.name.toLowerCase().includes('google')));
                 if (!selectedVoice) selectedVoice = voices.find(v => v.lang.startsWith('id'));
-                
-                if (selectedVoice) {
-                    ut.voice = selectedVoice;
-                }
-                
+                if (selectedVoice) ut.voice = selectedVoice;
                 ut.lang = 'id-ID';
                 ut.rate = STATE.voiceSpeed === 'slow' ? 0.75 : 0.95;
-                ut.pitch = 1.35; // Menaikkan pitch untuk membuat suara terdengar lebih feminin dan ramah
+                ut.pitch = 1.3;
                 ut.volume = STATE.volume === 'low' ? 0.3 : (STATE.volume === 'high' ? 1.0 : 0.7);
-                
                 window.speechSynthesis.speak(ut);
             }
         }
+        window.speechSynthesis.onvoiceschanged = () => {};
 
-        // Pastikan daftar suara dimuat sebelum aplikasi digunakan
-        window.speechSynthesis.onvoiceschanged = () => {
-            console.log("Daftar suara diperbarui");
-        };
-
-        // --- Navigation & UI ---
+        // --- NAVIGASI ---
         function navigate(s) { STATE.screen = s; render(); }
         function openSettings() { renderSettingsMenu(); document.getElementById('settings-modal').classList.remove('hidden'); }
         function closeSettings() { document.getElementById('settings-modal').classList.add('hidden'); }
@@ -269,12 +363,18 @@
             else {
                 renderHeader();
                 const content = document.createElement('div');
-                content.className = "flex-1 overflow-y-auto no-scrollbar p-6 pt-24 pb-32";
-                if (STATE.screen === 'menu') renderMenu(content);
-                else if (STATE.screen === 'materi') renderMateri(content);
-                else if (STATE.screen === 'level_select') renderLevelSelect(content);
-                else if (STATE.screen === 'game') renderGame(content);
-                else if (STATE.screen === 'final_score') renderFinalScore(content);
+                // Mengubah padding dan layout agar lebih adaptif di landscape
+                content.className = "flex-1 overflow-y-auto no-scrollbar p-6 pt-24 pb-32 flex flex-col items-center w-full";
+                const innerContainer = document.createElement('div');
+                innerContainer.className = "w-full max-w-5xl"; // Konten tidak melebar terlalu ekstrim di layar desktop
+                
+                if (STATE.screen === 'menu') renderMenu(innerContainer);
+                else if (STATE.screen === 'materi') renderMateri(innerContainer);
+                else if (STATE.screen === 'level_select') renderLevelSelect(innerContainer);
+                else if (STATE.screen === 'game') renderGame(innerContainer);
+                else if (STATE.screen === 'final_score') renderFinalScore(innerContainer);
+                
+                content.appendChild(innerContainer);
                 app.appendChild(content);
             }
             lucide.createIcons();
@@ -283,9 +383,9 @@
         function renderHeader() {
             const app = document.getElementById('app');
             const header = document.createElement('div');
-            header.className = "absolute top-0 left-0 right-0 z-40 p-4 bg-gradient-to-b from-[#FFF7ED] to-transparent";
+            header.className = "absolute top-0 left-0 right-0 z-40 p-4 bg-gradient-to-b from-[#FFF7ED] to-transparent pointer-events-none";
             header.innerHTML = `
-                <div class="bg-white rounded-2xl shadow-lg border-2 border-[#A7F3D0] p-3 flex items-center gap-2">
+                <div class="bg-white rounded-2xl shadow-lg border-2 border-[#A7F3D0] p-3 flex items-center gap-2 max-w-5xl mx-auto pointer-events-auto">
                     <div class="flex gap-1">
                         <button onclick="navigate('menu')" class="bg-[#FFF7ED] p-2 rounded-xl border border-[#A7F3D0] active:scale-95 transition-all"><i data-lucide="home" class="w-6 h-6"></i></button>
                         <button onclick="openSettings()" class="bg-[#FFF7ED] p-2 rounded-xl border border-orange-200 text-orange-400 active:scale-95 transition-all"><i data-lucide="settings" class="w-6 h-6"></i></button>
@@ -304,17 +404,31 @@
             if (text) { textEl.innerText = text; bubble.classList.remove('hidden'); speak(text); } else bubble.classList.add('hidden');
         }
 
+        // --- RENDER HALAMAN ---
+
         function renderIntro() {
             const app = document.getElementById('app');
             const el = document.createElement('div');
-            el.className = "flex flex-col items-center justify-center h-full p-6 text-center";
+            el.className = "flex flex-col items-center justify-center h-full p-6 text-center w-full";
             el.innerHTML = `
-                <div class="w-24 h-24 bg-white rounded-full shadow-lg flex items-center justify-center mb-6 animate-bounce-slow border-4 border-[#A7F3D0]"><i data-lucide="heart-pulse" class="w-12 h-12 text-orange-400"></i></div>
-                <h1 class="text-2xl font-black mb-2 uppercase text-[#1F2937]">Merawat Luka</h1>
-                <p class="text-sm text-gray-500 mb-8 font-bold px-4">Mari belajar merawat luka sendiri!</p>
-                <div class="w-full max-w-xs bg-white p-6 rounded-[2.5rem] shadow-xl border-2 border-orange-50">
-                    <input type="text" id="inputName" class="w-full border-2 border-[#A7F3D0] rounded-2xl p-4 text-center font-bold text-lg mb-4 bg-orange-50/30" placeholder="Siapa namamu?">
-                    <button id="btnStart" class="w-full bg-[#38BDF8] text-white font-black py-4 rounded-2xl shadow-lg opacity-50 uppercase tracking-widest" disabled>Mulai Belajar</button>
+                <!-- Ikon Hati di Atas (Diperbesar) -->
+                <div class="mb-4 animate-pulse-soft">
+                    <i data-lucide="heart" class="w-24 h-24 text-pink-500 fill-pink-100 drop-shadow-xl"></i>
+                </div>
+
+                <!-- Avatar (Strip hijau dihapus/diganti putih) -->
+                <div class="w-32 h-32 bg-white rounded-full shadow-lg flex items-center justify-center mb-6 animate-bounce-slow border-4 border-white overflow-hidden">
+                    <img src="img/tiara.png" class="w-full h-full object-contain" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                    <i data-lucide="heart-pulse" class="w-12 h-12 text-orange-400 hidden"></i>
+                </div>
+                
+                <h1 class="text-3xl font-black mb-2 uppercase text-[#1F2937]">Merawat Luka</h1>
+                <p class="text-md text-gray-500 mb-8 font-bold px-4">Mari belajar merawat luka sendiri!</p>
+                
+                <div class="w-full max-w-sm bg-white p-6 rounded-[2.5rem] shadow-xl border-2 border-orange-50">
+                    <!-- Input (Border hijau diganti orange lembut) -->
+                    <input type="text" id="inputName" class="w-full border-2 border-orange-100 rounded-2xl p-4 text-center font-bold text-lg mb-4 bg-orange-50/30 focus:outline-none focus:border-orange-300 transition-colors" placeholder="Siapa namamu?" autocomplete="off">
+                    <button id="btnStart" class="w-full bg-[#38BDF8] text-white font-black py-4 rounded-2xl shadow-lg opacity-50 uppercase tracking-widest transition-all hover:bg-[#0EA5E9] active:translate-y-1" disabled>Mulai Belajar</button>
                 </div>`;
             app.appendChild(el);
             const input = document.getElementById('inputName');
@@ -325,11 +439,11 @@
 
         function renderMenu(c) {
             c.innerHTML = `
-                <div class="grid gap-4 mt-4">
-                    <button onclick="navigate('materi')" class="bg-[#A7F3D0]/30 border-2 border-[#A7F3D0] p-6 rounded-[2.5rem] flex items-center gap-4 text-left shadow-sm active:scale-95 transition-all"><div class="bg-white p-4 rounded-2xl shadow-sm text-green-600"><i data-lucide="book-open" class="w-8 h-8"></i></div><div><h3 class="font-black text-xl">Materi Belajar</h3><p class="text-[10px] font-bold uppercase text-gray-400">6 Langkah Benar</p></div></button>
-                    <button onclick="navigate('level_select')" class="bg-[#38BDF8]/20 border-2 border-[#38BDF8] p-6 rounded-[2.5rem] flex items-center gap-4 text-left shadow-sm active:scale-95 transition-all"><div class="bg-white p-4 rounded-2xl shadow-sm text-blue-500"><i data-lucide="gamepad-2" class="w-8 h-8"></i></div><div><h3 class="font-black text-xl">Latihan Mandiri</h3><p class="text-[10px] font-bold uppercase text-gray-400">Uji Kemampuanmu</p></div></button>
+                <div class="grid gap-6 mt-4 md:grid-cols-2">
+                    <button onclick="navigate('materi')" class="bg-[#A7F3D0]/30 border-2 border-[#A7F3D0] p-6 rounded-[2.5rem] flex items-center gap-4 text-left shadow-sm active:scale-95 transition-all hover:bg-[#A7F3D0]/50"><div class="bg-white p-5 rounded-2xl shadow-sm text-green-600"><i data-lucide="book-open" class="w-10 h-10"></i></div><div><h3 class="font-black text-xl">Materi Belajar</h3><p class="text-[10px] font-bold uppercase text-gray-500">6 Langkah Benar</p></div></button>
+                    <button onclick="navigate('level_select')" class="bg-[#38BDF8]/20 border-2 border-[#38BDF8] p-6 rounded-[2.5rem] flex items-center gap-4 text-left shadow-sm active:scale-95 transition-all hover:bg-[#38BDF8]/40"><div class="bg-white p-5 rounded-2xl shadow-sm text-blue-500"><i data-lucide="gamepad-2" class="w-10 h-10"></i></div><div><h3 class="font-black text-xl">Mulai Main</h3><p class="text-[10px] font-bold uppercase text-gray-500">Level 1-4</p></div></button>
                 </div>
-                <div class="mt-8 p-5 bg-white/50 rounded-3xl border-2 border-orange-100 flex flex-col items-center">
+                <div class="mt-8 p-5 bg-white/50 rounded-3xl border-2 border-orange-100 flex flex-col items-center max-w-sm mx-auto">
                     <p class="text-xs font-bold text-gray-400 uppercase mb-3">Butuh Bantuan?</p>
                     <button onclick="openPanduan()" class="flex items-center gap-2 bg-white px-6 py-3 rounded-2xl shadow-sm border border-orange-200 text-orange-400 font-bold active:scale-95 transition-all"><i data-lucide="book-open" class="w-5 h-5"></i> Buku Panduan</button>
                 </div>`;
@@ -337,49 +451,131 @@
 
         function renderMateri(c) {
             c.innerHTML = `
-                <h2 class="font-black text-center mb-4 uppercase text-[#1F2937]">6 Langkah Perawatan</h2>
-                <div class="hd-frame rounded-[2.5rem] aspect-video overflow-hidden mb-8 bg-gray-900 flex items-center justify-center"><iframe class="w-full h-full" src="https://www.youtube.com/embed/p7nKQH8sAfw" frameborder="0" allowfullscreen></iframe></div>
-                <div class="space-y-3 pb-6">${LEVEL_2_STEPS.map((s,i) => `<div class="bg-white p-4 rounded-2xl flex items-center gap-4 text-sm border-2 border-orange-50 shadow-sm transition-transform hover:scale-[1.02]"><span class="w-8 h-8 bg-[#A7F3D0] rounded-full flex items-center justify-center font-black text-xs">${i+1}</span> <b class="text-[#1F2937] uppercase text-[10px] tracking-tight">${s.label}</b></div>`).join('')}</div>
-                <button onclick="navigate('level_select')" class="w-full bg-[#38BDF8] text-white py-5 rounded-[2rem] font-black uppercase shadow-lg border-b-8 border-blue-700 active:translate-y-2">Ayo Berlatih!</button>`;
+                <h2 class="font-black text-center mb-4 uppercase text-[#1F2937] text-xl">6 Langkah Perawatan</h2>
+                <div class="hd-frame rounded-[2.5rem] aspect-video w-full max-w-3xl mx-auto overflow-hidden mb-8 bg-gray-900 flex items-center justify-center">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/p7nKQH8sAfw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pb-6">${LEVEL_2_STEPS.map((s,i) => `
+                    <div class="bg-white p-4 rounded-2xl flex items-center gap-4 text-sm border-2 border-orange-50 shadow-sm transition-transform hover:scale-[1.02]">
+                        <span class="w-10 h-10 bg-[#A7F3D0] rounded-full flex items-center justify-center font-black text-sm shrink-0">${i+1}</span> 
+                        <b class="text-[#1F2937] uppercase text-xs tracking-tight flex-1">${s.label}</b>
+                        <div class="w-8 h-8 bg-gray-50 rounded-full flex items-center justify-center border border-gray-100">
+                             <i data-lucide="${s.icon}" class="w-4 h-4 text-gray-400"></i>
+                        </div>
+                    </div>`).join('')}</div>
+                <div class="max-w-md mx-auto">
+                    <button onclick="navigate('level_select')" class="w-full bg-[#38BDF8] text-white py-5 rounded-[2rem] font-black uppercase shadow-lg border-b-8 border-blue-700 active:translate-y-2 text-lg">Ayo Berlatih!</button>
+                </div>`;
         }
 
         function renderLevelSelect(c) {
+            // Label khusus untuk setiap level
+            const levelLabels = ["1 PILIH ALAT", "2 URUTAN", "3 KUIS", "4 SIMULASI"];
+            
             c.innerHTML = `
-                <h2 class="font-black mb-8 text-center uppercase tracking-widest text-gray-400 text-sm">Pilih Tantangan</h2>
-                <div class="grid grid-cols-2 gap-4">
-                    ${[1,2,3,4].map(l => { const done = STATE.completedLevels.includes(l); return `<button onclick="startLevel(${l})" class="bg-white border-2 ${done ? 'border-[#A7F3D0]' : 'border-gray-100'} p-5 rounded-[2.5rem] flex flex-col items-center gap-3 shadow-md relative transition-all active:scale-95">${done ? '<i data-lucide="star" class="absolute top-3 right-3 w-6 h-6 text-orange-400 fill-current animate-star"></i>' : ''}<div class="w-14 h-14 ${done ? 'bg-[#A7F3D0] text-white' : 'bg-gray-100 text-gray-300'} rounded-full flex items-center justify-center font-black text-2xl">${l}</div><span class="text-[10px] font-black uppercase text-[#1F2937]">${l==1?'Pilih Alat':l==2?'Urutan':l==3?'Kuis':'Simulasi'}</span></button>`; }).join('')}
+                <h2 class="font-black mb-8 text-center uppercase tracking-widest text-gray-400 text-sm">Pilih Level</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    ${[1,2,3,4].map(l => { const done = STATE.completedLevels.includes(l); return `<button onclick="startLevel(${l})" class="bg-white border-2 ${done ? 'border-[#A7F3D0]' : 'border-gray-100'} p-6 rounded-[2.5rem] flex flex-col items-center gap-4 shadow-md relative transition-all active:scale-95 hover:shadow-xl">${done ? '<i data-lucide="star" class="absolute top-4 right-4 w-6 h-6 text-orange-400 fill-current animate-star"></i>' : ''}<div class="w-20 h-20 ${done ? 'bg-[#A7F3D0] text-white' : 'bg-gray-100 text-gray-300'} rounded-full flex items-center justify-center font-black text-3xl">${l}</div><span class="text-[10px] font-black uppercase text-[#1F2937] text-center leading-tight">${levelLabels[l-1]}</span></button>`; }).join('')}
                 </div>`;
         }
 
         function startLevel(l) { STATE.currentLevel = l; STATE.selectedTools = []; STATE.orderStep = []; STATE.quizIndex = 0; STATE.woundState = 0; STATE.screen = 'game'; render(); }
 
         function renderGame(c) {
-            const header = `<div class="text-center mb-6"><span class="bg-[#38BDF8]/10 text-[#38BDF8] px-5 py-1.5 rounded-full text-[10px] font-black uppercase border-2 border-[#38BDF8]/20 tracking-widest">Tingkat ${STATE.currentLevel}</span></div>`;
+            const header = `<div class="text-center mb-6"><span class="bg-[#38BDF8]/10 text-[#38BDF8] px-6 py-2 rounded-full text-xs font-black uppercase border-2 border-[#38BDF8]/20 tracking-widest">Level ${STATE.currentLevel}</span></div>`;
             
             if (STATE.currentLevel === 1) {
                 updateAvatarUI("Cari dan klik 5 alat yang kita butuhkan untuk merawat luka.");
-                c.innerHTML = header + `<div id="tool-grid" class="grid grid-cols-2 gap-4 mb-8">${LEVEL_1_TOOLS.map(t => { const asset = ASSETS[t.id]; const isCorrectAlready = STATE.selectedTools.includes(t.id); return `<button id="btn-${t.id}" onclick="handleToolClick('${t.id}')" class="p-5 rounded-[2rem] border-4 transition-all flex flex-col items-center gap-3 ${isCorrectAlready ? 'border-[#A7F3D0] bg-[#A7F3D0]/10' : 'border-white bg-white shadow-md'}"><div class="w-16 h-16 rounded-3xl ${asset.color} flex items-center justify-center shadow-sm border-2 border-white"><i data-lucide="${asset.icon}" class="w-10 h-10"></i></div><span class="text-[10px] font-black text-center text-[#1F2937] uppercase leading-tight">${asset.label}</span></button>`; }).join('')}</div><div class="text-center font-black text-blue-500 uppercase text-xs">Menemukan: ${STATE.selectedTools.length} / 5</div>`;
+                // TINGKAT 1: Grid responsif (2 kolom di mobile, 4 di desktop)
+                c.innerHTML = header + `<div id="tool-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">${LEVEL_1_TOOLS.map(t => { 
+                    const asset = ASSETS[t.id]; 
+                    const isCorrectAlready = STATE.selectedTools.includes(t.id); 
+                    return `
+                    <button id="btn-${t.id}" onclick="handleToolClick('${t.id}')" class="p-6 rounded-[2.5rem] border-4 transition-all flex flex-col items-center gap-4 ${isCorrectAlready ? 'border-[#A7F3D0] bg-[#A7F3D0]/10' : 'border-white bg-white shadow-lg hover:shadow-xl'}">
+                        <div class="w-full aspect-square rounded-3xl ${asset.img ? 'bg-white' : asset.color} flex items-center justify-center shadow-sm border-2 border-gray-50 overflow-hidden p-2">
+                            ${asset.img ? 
+                                `<img src="${asset.img}" class="w-full h-full object-contain" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                                 <i data-lucide="${asset.icon}" class="w-16 h-16 hidden"></i>` 
+                                : `<i data-lucide="${asset.icon}" class="w-16 h-16"></i>`
+                            }
+                        </div>
+                        <span class="text-sm font-black text-center text-[#1F2937] uppercase leading-tight">${asset.label}</span>
+                    </button>`; 
+                }).join('')}</div><div class="text-center font-black text-blue-500 uppercase text-sm">Menemukan: ${STATE.selectedTools.length} / 5</div>`;
             } else if (STATE.currentLevel === 2) {
                 updateAvatarUI("Klik urutan yang benar dari nomor 1 sampai 6 ya!");
-                c.innerHTML = header + `<div class="flex gap-2 mb-10 overflow-x-auto pb-4 no-scrollbar min-h-[110px]">${[0,1,2,3,4,5].map(i => { const item = STATE.orderStep[i]; return `<div class="min-w-[80px] h-[100px] border-4 border-dashed border-orange-100 rounded-3xl flex flex-col items-center justify-center bg-white shadow-inner p-2">${item ? `<i data-lucide="${item.icon}" class="w-10 h-10 text-[#38BDF8] animate-pop-in"></i><span class="text-[8px] font-black text-center mt-1 leading-tight uppercase text-[#1F2937]">${item.label}</span>` : `<span class="text-orange-50 font-black text-3xl">${i+1}</span>`}</div>`; }).join('')}</div><div class="grid grid-cols-2 gap-4 mb-6">${LEVEL_2_STEPS.map(s => { const used = STATE.orderStep.find(x => x.id === s.id); return `<button onclick="addOrderLevel2('${s.id}')" ${used?'disabled':''} class="bg-white p-6 rounded-[2.5rem] border-2 border-gray-100 flex flex-col items-center justify-center transition-all ${used?'opacity-20':'shadow-lg active:scale-95 hover:border-[#38BDF8]'}"><div class="w-20 h-20 bg-orange-50 rounded-2xl flex items-center justify-center mb-3"><i data-lucide="${s.icon}" class="w-12 h-12 text-orange-400"></i></div><span class="text-[10px] font-black text-center uppercase text-[#1F2937] tracking-tighter leading-tight">${s.label}</span></button>`; }).join('')}</div>`;
+                // TINGKAT 2: Layout responsif
+                c.innerHTML = header + `
+                <div class="flex gap-4 mb-8 overflow-x-auto pb-6 no-scrollbar min-h-[180px] px-4 w-full justify-start md:justify-center">
+                    ${[0,1,2,3,4,5].map(i => { const item = STATE.orderStep[i]; return `<div class="min-w-[140px] h-[180px] border-4 border-dashed border-orange-100 rounded-[2rem] flex flex-col items-center justify-center bg-white shadow-inner p-2 overflow-hidden shrink-0 snap-center">${item ? `<img src="${item.img}" class="w-full h-full object-contain animate-pop-in" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i data-lucide="${item.icon}" class="w-12 h-12 text-[#38BDF8] animate-pop-in hidden"></i>` : `<span class="text-orange-100 font-black text-6xl">${i+1}</span>`}</div>`; }).join('')}
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mb-6">${LEVEL_2_STEPS.map(s => { 
+                    const used = STATE.orderStep.find(x => x.id === s.id); 
+                    return `
+                    <button onclick="addOrderLevel2('${s.id}')" ${used?'disabled':''} class="bg-white p-5 rounded-[2.5rem] border-2 border-gray-100 flex flex-col items-center justify-center transition-all ${used?'opacity-30 grayscale':'shadow-xl active:scale-95 hover:border-[#38BDF8] hover:-translate-y-1'}">
+                        <div class="w-full aspect-square bg-orange-50 rounded-2xl flex items-center justify-center mb-3 overflow-hidden border border-orange-100">
+                             <img src="${s.img}" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                             <i data-lucide="${s.icon}" class="w-16 h-16 text-orange-400 hidden"></i>
+                        </div>
+                        <span class="text-xs font-black text-center uppercase text-[#1F2937] tracking-tighter leading-tight">${s.label}</span>
+                    </button>`; 
+                }).join('')}</div>`;
             } else if (STATE.currentLevel === 3) {
                 const q = LEVEL_3_QUIZ[STATE.quizIndex]; updateAvatarUI(q.q);
-                c.innerHTML = header + `<div class="bg-white p-10 rounded-[3rem] shadow-xl border-4 border-white mb-8 text-center"><h3 class="font-black text-xl leading-snug text-[#1F2937]">${q.q}</h3></div><div class="space-y-4">${q.opts.map(opt => `<button onclick="answerQuiz(${opt.c})" class="w-full bg-white p-6 rounded-[2.5rem] border-2 border-gray-100 shadow-md active:bg-blue-50 font-black text-lg transition-all text-[#1F2937]">${opt.t}</button>`).join('')}</div>`;
+                c.innerHTML = header + `<div class="bg-white p-12 rounded-[3rem] shadow-xl border-4 border-white mb-10 text-center max-w-2xl mx-auto"><h3 class="font-black text-2xl leading-snug text-[#1F2937]">${q.q}</h3></div><div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto w-full">${q.opts.map(opt => `<button onclick="answerQuiz(${opt.c})" class="w-full bg-white p-8 rounded-[2.5rem] border-2 border-gray-100 shadow-lg active:bg-blue-50 font-black text-xl transition-all text-[#1F2937] hover:bg-gray-50 hover:border-blue-200">${opt.t}</button>`).join('')}</div>`;
             } else if (STATE.currentLevel === 4) {
-                updateAvatarUI("Ayo tarik alat dari kotak ke arah bingkai gambar HD.");
+                updateAvatarUI("Ayo tarik alat dari kotak ke arah bingkai gambar.");
+                // TINGKAT 4: SIMULASI LANDSCAPE (Side-by-side pada layar besar)
                 const wounds = [
-                    { icon: 'hand', text: 'Tangan Kotor (Mencuci Tangan)', color: 'text-blue-400' }, { icon: 'droplets', text: 'Bilas Luka (Membersihkan)', color: 'text-blue-600' },
-                    { icon: 'file-text', text: 'Luka Basah (Mengeringkan)', color: 'text-gray-400' }, { icon: 'flask-conical', text: 'Beri Obat (Meneteskan)', color: 'text-red-600' },
-                    { icon: 'square', text: 'Tutup Luka (Menutup)', color: 'text-gray-300' }, { icon: 'bandage', text: 'Selesai (Merekatkan Plester)', color: 'text-yellow-600' },
-                    { icon: 'smile', text: 'Hebat! Luka sudah rapi.', color: 'text-green-500' }
+                    { img: 'img/karakter_luka_kotor.png', text: 'Tangan Kotor' }, 
+                    { img: 'img/karakter_tangan_bersih.png', text: 'Tangan Bersih' },
+                    { img: 'img/karakter_luka_bersih.png', text: 'Luka Bersih' }, 
+                    { img: 'img/karakter_luka_kering.png', text: 'Luka Kering' },
+                    { img: 'img/karakter_luka_obat.png', text: 'Diberi Obat' }, 
+                    { img: 'img/karakter_luka_tutup.png', text: 'Ditutup Kasa' },
+                    { img: 'img/karakter_luka_plester.png', text: 'Selesai (Diplester)' }
                 ];
                 const cur = wounds[STATE.woundState];
-                c.innerHTML = header + `<div class="flex flex-col items-center mb-10"><div id="drop-zone" class="w-80 h-80 hd-frame bg-white rounded-[3rem] flex flex-col items-center justify-center relative overflow-hidden"><i data-lucide="${cur.icon}" class="w-32 h-32 ${cur.color} animate-pulse-soft"></i><div class="absolute bottom-6 bg-white/90 px-6 py-2 rounded-full shadow-sm border border-gray-100"><span class="text-[10px] font-black uppercase text-[#1F2937]">${cur.text}</span></div></div></div><div class="bg-white p-6 rounded-[3rem] border-2 border-orange-50 shadow-inner flex flex-wrap justify-center gap-5">${['cuci', 'air', 'tisu_steril', 'betadine', 'kasa_steril', 'plester'].map(id => { const a = ASSETS[id]; return `<div class="draggable-item flex flex-col items-center gap-2 w-16" data-id="${id}"><div class="w-14 h-14 rounded-2xl ${a.color} flex items-center justify-center shadow-md border-2 border-white"><i data-lucide="${a.icon}" class="w-8 h-8"></i></div><span class="text-[8px] font-black uppercase text-center leading-tight text-[#1F2937]">${a.label}</span></div>`; }).join('')}</div>`;
+                
+                c.innerHTML = header + `
+                <div class="flex flex-col md:flex-row items-center justify-center gap-10 w-full h-full">
+                    <!-- Area Gambar Luka (Kiri/Atas) -->
+                    <div class="flex-1 flex justify-center w-full max-w-[500px]">
+                        <div id="drop-zone" class="w-full aspect-square hd-frame bg-white rounded-[3rem] flex flex-col items-center justify-center relative overflow-hidden transition-all duration-300 shadow-2xl border-8 border-white">
+                            <img src="${cur.img}" class="w-full h-full object-cover animate-pop-in" onerror="this.onerror=null;this.src='https://placehold.co/500x500/e2e8f0/475569?text=Gambar+Luka+HD';">
+                            <div class="absolute bottom-4 left-0 right-0 flex justify-center">
+                                <div class="bg-white/95 backdrop-blur px-6 py-3 rounded-full shadow-md border border-gray-200">
+                                    <span class="text-sm font-black uppercase text-[#1F2937] tracking-widest">${cur.text}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Area Alat (Kanan/Bawah) -->
+                    <div class="flex-1 flex justify-center">
+                        <div class="bg-white/60 p-8 rounded-[3rem] border-2 border-white shadow-lg flex flex-wrap justify-center gap-6 max-w-md">
+                            ${['cuci', 'air', 'tisu_steril', 'betadine', 'kasa_steril', 'plester'].map(id => { 
+                                const a = ASSETS[id]; 
+                                return `
+                                <div class="draggable-item flex flex-col items-center gap-2 w-24 transition-transform active:scale-110 cursor-grab" data-id="${id}">
+                                    <div class="w-24 h-24 rounded-[1.5rem] ${a.img ? 'bg-white' : a.color} flex items-center justify-center shadow-lg border-4 border-white overflow-hidden p-2 hover:shadow-xl transition-shadow">
+                                        ${a.img ? 
+                                            `<img src="${a.img}" class="w-full h-full object-contain pointer-events-none" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                                            <i data-lucide="${a.icon}" class="w-12 h-12 pointer-events-none hidden"></i>` 
+                                            : `<i data-lucide="${a.icon}" class="w-12 h-12 pointer-events-none"></i>`
+                                        }
+                                    </div>
+                                    <span class="text-[10px] font-black uppercase text-center leading-tight text-[#1F2937] bg-white/80 px-3 py-1 rounded-full shadow-sm">${a.label}</span>
+                                </div>`; 
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>`;
                 setTimeout(initDragAndDrop, 100);
             }
         }
 
-        // --- Logic Handlers ---
+        // --- Logic Handlers (Sama) ---
         function handleToolClick(id) {
             const tool = LEVEL_1_TOOLS.find(t => t.id === id);
             const btn = document.getElementById(`btn-${id}`);
@@ -404,27 +600,27 @@
         function showVictory() {
             document.getElementById('victory-name').innerText = STATE.name;
             const container = document.getElementById('victory-star-container');
-            container.innerHTML = `<div class="bg-white/50 p-6 rounded-[2.5rem] border-4 border-orange-100 flex gap-4 items-center justify-center animate-bounce-slow shadow-inner">${Array.from({length: STATE.currentLevel}, (_, i) => `<i data-lucide="star" class="w-12 h-12 text-orange-400 fill-current animate-star" style="animation-delay: ${i*0.15}s"></i>`).join('')}</div>`;
+            container.innerHTML = `<div class="bg-white/50 p-6 rounded-[2.5rem] border-4 border-orange-100 flex gap-4 items-center justify-center animate-bounce-slow shadow-inner">${Array.from({length: STATE.currentLevel}, (_, i) => `<i data-lucide="star" class="w-16 h-16 text-orange-400 fill-current animate-star" style="animation-delay: ${i*0.15}s"></i>`).join('')}</div>`;
             document.getElementById('victory-modal').classList.remove('hidden'); lucide.createIcons();
             updateAvatarUI(`Wah, ${STATE.name} pintar sekali! Kamu dapat ${STATE.currentLevel} bintang.`);
         }
 
         function closeVictory() { document.getElementById('victory-modal').classList.add('hidden'); navigate(STATE.completedLevels.length === 4 ? 'final_score' : 'level_select'); }
 
-        // --- Settings Management ---
+        // --- Settings Management (Sama) ---
         function renderSettingsMenu() {
             const content = document.getElementById('settings-content');
             document.getElementById('settings-title').innerText = "Pengaturan";
             content.innerHTML = `
-                <div onclick="renderTampilanSettings()" class="flex items-center justify-between p-5 bg-blue-50 rounded-3xl cursor-pointer border-2 border-transparent hover:border-blue-200">
+                <div onclick="renderTampilanSettings()" class="flex items-center justify-between p-5 bg-blue-50 rounded-3xl cursor-pointer border-2 border-transparent hover:border-blue-200 transition-colors">
                     <div class="flex items-center gap-4"><div class="bg-white p-3 rounded-2xl text-blue-500 shadow-sm"><i data-lucide="monitor"></i></div><span class="font-bold text-lg">Tampilan</span></div>
                     <i data-lucide="chevron-right" class="text-blue-300"></i>
                 </div>
-                <div onclick="renderSuaraSettings()" class="flex items-center justify-between p-5 bg-green-50 rounded-3xl cursor-pointer border-2 border-transparent hover:border-green-200">
+                <div onclick="renderSuaraSettings()" class="flex items-center justify-between p-5 bg-green-50 rounded-3xl cursor-pointer border-2 border-transparent hover:border-green-200 transition-colors">
                     <div class="flex items-center gap-4"><div class="bg-white p-3 rounded-2xl text-green-500 shadow-sm"><i data-lucide="volume-2"></i></div><span class="font-bold text-lg">Suara</span></div>
                     <i data-lucide="chevron-right" class="text-green-300"></i>
                 </div>
-                <div onclick="renderPendampingSettings()" class="flex items-center justify-between p-5 bg-purple-50 rounded-3xl cursor-pointer border-2 border-transparent hover:border-purple-200">
+                <div onclick="renderPendampingSettings()" class="flex items-center justify-between p-5 bg-purple-50 rounded-3xl cursor-pointer border-2 border-transparent hover:border-purple-200 transition-colors">
                     <div class="flex items-center gap-4"><div class="bg-white p-3 rounded-2xl text-purple-500 shadow-sm"><i data-lucide="users"></i></div><span class="font-bold text-lg">Pendamping</span></div>
                     <i data-lucide="chevron-right" class="text-purple-300"></i>
                 </div>`;
@@ -437,7 +633,7 @@
             content.innerHTML = `<button onclick="renderSettingsMenu()" class="text-sm font-bold text-gray-400 flex items-center gap-1 mb-4"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali</button>
                 <div class="space-y-6">
                     <div><p class="font-black text-xs uppercase text-gray-400 mb-2">Ukuran Teks</p>
-                    <div class="flex gap-2">${['small','medium','large'].map(s => `<button onclick="updateTextSize('${s}')" class="flex-1 py-2 rounded-xl border-2 ${STATE.textSize === s ? 'bg-blue-500 text-white border-blue-600' : 'bg-white border-gray-100 text-gray-400'} text-xs font-bold capitalize">${s === 'small' ? 'Kecil' : s === 'medium' ? 'Sedang' : 'Besar'}</button>`).join('')}</div></div>
+                    <div class="flex gap-2">${['small','medium','large'].map(s => `<button onclick="updateTextSize('${s}')" class="flex-1 py-2 rounded-xl border-2 ${STATE.textSize === s ? 'bg-blue-500 text-white border-blue-600' : 'bg-white border-gray-100 text-gray-400'} text-xs font-bold capitalize transition-all">${s === 'small' ? 'Kecil' : s === 'medium' ? 'Sedang' : 'Besar'}</button>`).join('')}</div></div>
                     <div><p class="font-black text-xs uppercase text-gray-400 mb-2">Warna Layar</p>
                     <div class="space-y-2"><button onclick="updateColor('normal')" class="w-full py-3 rounded-xl border-2 bg-white text-black text-xs font-bold ${STATE.colorMode==='normal'?'border-blue-500':''}">Normal (Putih)</button>
                     <button onclick="updateColor('high')" class="w-full py-3 rounded-xl border-2 bg-black text-yellow-400 text-xs font-bold border-yellow-400 ${STATE.colorMode==='high'?'ring-2 ring-blue-500':''}">Kontras Tinggi</button>
@@ -465,7 +661,7 @@
             lucide.createIcons();
         }
 
-        function updateTextSize(s) { STATE.textSize = s; document.body.className = `h-screen w-screen overflow-hidden flex justify-center text-size-${s}`; renderTampilanSettings(); }
+        function updateTextSize(s) { STATE.textSize = s; document.body.className = `h-screen w-screen overflow-hidden text-size-${s}`; renderTampilanSettings(); }
         function updateColor(m) { STATE.colorMode = m; document.body.classList.remove('mode-high-contrast', 'mode-soft'); if(m === 'high') document.body.classList.add('mode-high-contrast'); if(m === 'soft') document.body.classList.add('mode-soft'); renderTampilanSettings(); }
         function toggleAvatar() { STATE.isAvatarVisible = !STATE.isAvatarVisible; document.getElementById('avatar-container').classList.toggle('avatar-hidden', !STATE.isAvatarVisible); document.getElementById('avatar-arrow').setAttribute('data-lucide', STATE.isAvatarVisible ? 'chevron-left' : 'chevron-right'); lucide.createIcons(); }
 
