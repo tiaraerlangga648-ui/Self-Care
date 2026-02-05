@@ -3,566 +3,509 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Merawat Luka sendiri</title>
+    <title>Merawat Luka Sendiri - Self Care</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Varela Round -->
-    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
     
     <!-- Icon Library -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
+        :root {
+            --app-font: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', 'Comic Neue', cursive;
+            --app-bg: #FFF7ED;
+            --app-text: #1F2937;
+        }
+
         body {
-            font-family: 'Varela Round', sans-serif;
+            font-family: var(--app-font);
             overscroll-behavior: none; 
             -webkit-tap-highlight-color: transparent;
-            background-color: #FFF7ED; /* Pastel Peach */
-            color: #1F2937; /* Dark Gray */
+            background-color: var(--app-bg);
+            color: var(--app-text);
+            transition: background-color 0.3s, color 0.3s;
         }
+
+        /* Mode Warna */
+        body.mode-high-contrast { background-color: #000 !important; color: #FFFF00 !important; }
+        body.mode-high-contrast .bg-white { background-color: #000 !important; border-color: #FFFF00 !important; color: #FFFF00 !important; }
+        body.mode-soft { background-color: #F5E6D3 !important; }
+
+        /* Ukuran Teks */
+        .text-size-small { font-size: 0.875rem; }
+        .text-size-medium { font-size: 1rem; }
+        .text-size-large { font-size: 1.25rem; }
+
+        /* Optimasi Kualitas Gambar */
+        img { image-rendering: high-quality; -ms-interpolation-mode: bicubic; }
 
         /* Animasi */
         @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes pop-in { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        @keyframes pulse-soft { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
+        @keyframes pulse-soft { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } }
         @keyframes star-appear { 0% { transform: scale(0) rotate(-45deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         
         .animate-bounce-slow { animation: bounce-slow 3s infinite; }
         .animate-pop-in { animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .animate-spin-slow { animation: spin-slow 10s linear infinite; }
-        .animate-shake { animation: shake 0.2s ease-in-out 3; }
         .animate-pulse-soft { animation: pulse-soft 2s infinite ease-in-out; }
         .animate-star { animation: star-appear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .animate-shake { animation: shake 0.2s ease-in-out 2; }
 
-        /* Gaya Seret & Lepas */
-        .draggable-item { cursor: grab; touch-action: none; user-select: none; will-change: transform; }
-        .draggable-item:active { cursor: grabbing; transform: scale(1.1); z-index: 100; }
-        .drop-zone-active { border-color: #38BDF8 !important; background-color: #f0f9ff !important; transform: scale(1.02); }
-        #drop-zone { touch-action: none; transition: all 0.3s ease; }
-
-        .dragging-clone { position: fixed; pointer-events: none; z-index: 9999; opacity: 0.9; transform: scale(1.1); will-change: left, top; }
+        .draggable-item { cursor: grab; touch-action: none; user-select: none; }
+        .drop-zone-active { border-color: #38BDF8 !important; background-color: #f0f9ff !important; transform: scale(1.03); }
+        .dragging-clone { position: fixed; pointer-events: none; z-index: 9999; opacity: 0.9; transform: scale(1.1); }
         
         .avatar-content { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .avatar-hidden .avatar-content { transform: translateX(-120%); }
-        .avatar-toggle-icon { transition: transform 0.3s; }
-        .avatar-hidden .avatar-toggle-icon { transform: rotate(180deg); }
 
         .progress-striped {
             background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
             background-size: 1rem 1rem;
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .breath-circle { transition: transform 4s ease-in-out; transform: scale(0.6); }
-        .breath-circle.expand { transform: scale(1.2); }
+        .hd-frame { border: 8px solid white; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        
+        /* Aset warna */
+        .asset-cuci { background-color: #E0F2FE; color: #0EA5E9; }
+        .asset-air { background-color: #DBEAFE; color: #2563EB; }
+        .asset-betadine { background-color: #FEF2F2; color: #DC2626; }
+        .asset-tisu { background-color: #F3F4F6; color: #6B7280; }
+        .asset-kasa { background-color: #F9FAFB; color: #9CA3AF; }
+        .asset-plester { background-color: #FEF3C7; color: #D97706; }
+
+        /* Panduan Styling */
+        .guide-section { border-bottom: 2px dashed #A7F3D0; padding-bottom: 1rem; margin-bottom: 1rem; }
+        .guide-section:last-child { border-bottom: none; }
+        .guide-h2 { font-weight: 900; color: #1F2937; text-transform: uppercase; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .guide-h3 { font-weight: 700; color: #38BDF8; margin-top: 0.75rem; margin-bottom: 0.25rem; }
     </style>
 </head>
-<body class="h-screen w-screen overflow-hidden flex justify-center bg-gradient-to-br from-[#FFF7ED] to-white">
+<body class="h-screen w-screen overflow-hidden flex justify-center text-size-medium">
 
-    <!-- Kontainer Utama -->
-    <div id="app" class="relative w-full max-md h-full bg-white/40 shadow-2xl flex flex-col border-x border-white overflow-hidden">
-        <!-- Konten disuntikkan oleh JS -->
+    <div id="app" class="relative w-full max-w-md h-full bg-white/40 shadow-2xl flex flex-col border-x border-white overflow-hidden">
+        <!-- Konten via JS -->
     </div>
 
-    <!-- Avatar Pendamping (Diberi pointer-events-none agar tidak menghalangi area di sekitarnya) -->
+    <!-- Avatar Pendamping -->
     <div id="avatar-container" class="fixed bottom-4 left-2 z-40 flex items-end gap-1 w-full max-w-[380px] pointer-events-none">
-        <!-- Button Toggle (Diberi pointer-events-auto agar tetap bisa ditekan) -->
         <button onclick="toggleAvatar()" class="bg-white border-2 border-[#A7F3D0] text-[#38BDF8] rounded-full p-1.5 shadow-md hover:bg-orange-50 active:scale-95 transition-all z-50 mb-4 pointer-events-auto">
             <i data-lucide="chevron-left" class="w-5 h-5 avatar-toggle-icon" id="avatar-arrow"></i>
         </button>
         <div id="avatar-wrapper" class="avatar-content flex flex-col items-start gap-1">
-            <!-- Bubble Pesan -->
             <div id="avatar-bubble" class="bg-white p-3 rounded-2xl rounded-bl-none shadow-lg border-2 border-[#A7F3D0] mb-1 relative max-w-[220px] animate-pop-in hidden">
-                <p id="avatar-text" class="text-[#1F2937] font-bold text-sm leading-tight">Halo!</p>
+                <p id="avatar-text" class="text-[#1F2937] font-bold text-sm leading-tight"></p>
             </div>
-            <!-- Gambar Karakter (Diberi pointer-events-auto) -->
             <div id="avatar-bear" class="w-20 h-20 bg-white rounded-full border-4 border-white shadow-xl flex items-center justify-center overflow-hidden animate-bounce-slow cursor-pointer pointer-events-auto" onclick="toggleAvatar()">
-                <img src="img/tiara.png" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100?text=🐻'">
+                <div class="bg-orange-100 w-full h-full flex items-center justify-center">
+                    <i data-lucide="user" class="w-12 h-12 text-orange-400"></i>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Tombol Navigasi Kanan Atas -->
-    <div class="fixed top-20 right-4 z-50 flex flex-col gap-2 items-center">
-        <button id="guide-btn" onclick="openPanduan()" class="bg-white/90 p-2 rounded-full shadow-md border border-[#A7F3D0] text-[#38BDF8] hover:bg-white active:scale-95 transition-all hidden">
-            <i data-lucide="book-open" class="w-6 h-6"></i>
-        </button>
-        <button id="mute-btn" onclick="toggleMute()" class="bg-white/90 p-2 rounded-full shadow-md border border-gray-200 text-[#6B7280] hover:bg-white active:scale-95 transition-all hidden">
-            <i data-lucide="volume-2" id="mute-icon" class="w-6 h-6"></i>
-        </button>
+    <!-- MODAL PENGATURAN -->
+    <div id="settings-modal" class="hidden fixed inset-0 z-[120] bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+        <div id="settings-card" class="bg-white rounded-[3rem] w-full max-w-md max-h-[90vh] flex flex-col shadow-2xl animate-pop-in overflow-hidden border-4 border-orange-200">
+            <div class="p-6 border-b border-orange-50 flex justify-between items-center bg-orange-50/50">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="settings" class="text-orange-500 w-8 h-8"></i>
+                    <h2 id="settings-title" class="font-black text-[#1F2937] text-2xl uppercase tracking-tight">Pengaturan</h2>
+                </div>
+                <button onclick="closeSettings()" class="bg-white p-2 rounded-full text-gray-400 hover:text-red-500 transition-colors shadow-sm"><i data-lucide="x"></i></button>
+            </div>
+            <div id="settings-content" class="p-6 overflow-y-auto no-scrollbar space-y-4 bg-white flex-1"></div>
+            <div class="p-6 bg-gray-50 border-t border-gray-100">
+                <button onclick="closeSettings()" class="w-full bg-[#38BDF8] text-white font-black py-4 rounded-[2rem] shadow-lg uppercase text-lg border-b-4 border-blue-700 active:translate-y-1">Simpan & Tutup</button>
+            </div>
+        </div>
     </div>
 
-    <!-- MODAL BUKU PANDUAN -->
-    <div id="guide-modal" class="hidden fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl animate-pop-in overflow-hidden border-4 border-[#A7F3D0]">
+    <!-- MODAL BUKU PANDUAN (USER GUIDE) -->
+    <div id="guide-modal" class="hidden fixed inset-0 z-[130] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[3rem] w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl animate-pop-in overflow-hidden border-4 border-[#A7F3D0]">
             <div class="p-5 border-b border-orange-50 flex justify-between items-center bg-[#A7F3D0]/30">
                 <div class="flex items-center gap-2">
                     <i data-lucide="book-open" class="text-[#1F2937]"></i>
-                    <h2 class="font-black text-[#1F2937] text-lg uppercase tracking-tight leading-tight">Buku Panduan</h2>
+                    <h2 class="font-black text-[#1F2937] text-lg uppercase">Buku Panduan</h2>
                 </div>
-                <button onclick="closePanduan()" class="bg-white p-1 rounded-full text-[#6B7280] hover:text-red-500 transition-colors shadow-sm"><i data-lucide="x"></i></button>
+                <button onclick="closePanduan()" class="bg-white p-1 rounded-full text-[#6B7280] hover:text-red-500 shadow-sm"><i data-lucide="x"></i></button>
             </div>
             
-            <div class="p-6 overflow-y-auto no-scrollbar text-sm leading-relaxed text-[#1F2937]">
-                <div class="text-center mb-8 border-b-2 border-dashed border-[#A7F3D0] pb-6">
-                    <h1 class="text-xl font-black text-[#1F2937] leading-tight uppercase">Buku Penggunaan Aplikasi</h1>
-                    <p class="text-[#38BDF8] font-bold mt-1 uppercase text-sm">Gamifikasi Pembelajaran Self Care (Perawatan Luka)</p>
-                    <p class="text-[10px] text-[#6B7280] italic mt-2 uppercase tracking-widest">Untuk Orang Tua Murid dan Guru/Terapis</p>
+            <div class="p-6 overflow-y-auto no-scrollbar text-sm text-[#1F2937] leading-relaxed">
+                <div class="text-center mb-6">
+                    <h1 class="text-xl font-black uppercase text-[#1F2937]">Buku Penggunaan Aplikasi</h1>
+                    <p class="text-blue-500 font-bold">Gamifikasi Pembelajaran Self Care (Perawatan Luka)</p>
+                    <p class="text-[10px] text-gray-400 italic">Untuk Orang Tua Murid dan Guru/Terapis</p>
                 </div>
 
-                <section class="mb-6">
-                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
-                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">A</span> Pendahuluan
-                    </h3>
-                    <p class="text-xs text-[#6B7280]">Aplikasi Gamifikasi Pembelajaran Self Care (Perawatan Luka) dikembangkan untuk membantu peserta didik disabilitas intelektual ringan dalam mempelajari keterampilan perawatan luka secara mandiri, aman, dan menyenangkan. Aplikasi ini menggabungkan elemen gamifikasi (poin, level, progres, dan reward) dengan model pembelajaran kontekstual, sehingga materi mudah dipahami dan dapat diterapkan dalam kehidupan sehari-hari.</p>
-                    <p class="text-xs text-[#6B7280] mt-2">Buku penggunaan ini disusun sebagai panduan praktis bagi orang tua murid serta guru/terapis dalam mendampingi anak saat menggunakan aplikasi.</p>
-                </section>
+                <div class="guide-section">
+                    <h2 class="guide-h2"><span class="bg-[#A7F3D0] w-6 h-6 rounded-full flex items-center justify-center text-xs">A</span> Pendahuluan</h2>
+                    <p class="text-xs">Aplikasi <b>Gamifikasi Pembelajaran Self Care (Perawatan Luka)</b> dikembangkan untuk membantu peserta didik disabilitas intelektual ringan dalam mempelajari keterampilan perawatan luka secara mandiri, aman, dan menyenangkan.</p>
+                </div>
 
-                <section class="mb-6">
-                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
-                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">B</span> Sasaran Pengguna
-                    </h3>
-                    <ul class="list-disc pl-5 space-y-1 text-xs text-[#6B7280]">
+                <div class="guide-section">
+                    <h2 class="guide-h2"><span class="bg-[#A7F3D0] w-6 h-6 rounded-full flex items-center justify-center text-xs">B</span> Sasaran Pengguna</h2>
+                    <ul class="list-disc pl-5 text-xs">
                         <li>Peserta didik disabilitas intelektual ringan</li>
-                        <li>Orang tua/wali murid sebagai pendamping di rumah</li>
-                        <li>Guru/Terapis sebagai fasilitator pembelajaran di sekolah atau pusat terapi</li>
+                        <li>Orang tua/wali murid sebagai pendamping</li>
+                        <li>Guru/Terapis sebagai fasilitator</li>
                     </ul>
-                </section>
+                </div>
 
-                <section class="mb-6">
-                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
-                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">C</span> Tujuan Penggunaan
-                    </h3>
-                    <ul class="list-disc pl-5 space-y-1 text-xs text-[#6B7280]">
-                        <li>Membantu anak memahami langkah-langkah dasar perawatan luka</li>
-                        <li>Meningkatkan kemandirian anak dalam self care</li>
-                        <li>Meningkatkan motivasi belajar melalui permainan edukatif</li>
-                        <li>Menyediakan media pembelajaran yang kontekstual dan interaktif</li>
-                    </ul>
-                </section>
-
-                <section class="mb-6">
-                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
-                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">D</span> Perangkat dan Akses
-                    </h3>
-                    <p class="text-xs text-[#6B7280] mb-2 italic">Aplikasi dapat diakses melalui web application menggunakan Komputer/Laptop, Tablet, atau Smartphone.</p>
-                    <div class="bg-[#FFF7ED] p-3 rounded-xl border border-[#A7F3D0] text-[10px]">
-                        <p class="font-bold uppercase text-[#38BDF8] mb-1">Kebutuhan:</p>
-                        <ul class="list-disc pl-4 space-y-0.5 text-[#6B7280]">
-                            <li>Koneksi internet</li>
-                            <li>Browser (Chrome, Edge, atau Firefox)</li>
-                        </ul>
-                    </div>
-                </section>
-
-                <section class="mb-6">
-                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
-                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">E</span> Struktur dan Fitur
-                    </h3>
-                    <div class="space-y-4 text-xs">
-                        <div>
-                            <p class="font-bold text-[#1F2937]">1. Halaman Awal</p>
-                            <p class="text-[#6B7280] pl-4 italic">Tampilan ilustrasi, kolom Nama Pengguna, dan Tombol Play.</p>
-                        </div>
-                        <div>
-                            <p class="font-bold text-[#1F2937]">2. Menu Materi (Modeling)</p>
-                            <p class="text-[#6B7280] pl-4 italic">Video pemodelan dan penjelasan alat (Air, Antiseptik, Kasa, Plester). Reward verbal diberikan setelah menonton.</p>
-                        </div>
-                        <div>
-                            <p class="font-bold text-[#1F2937]">3. Menu Level (Gamifikasi)</p>
-                            <ul class="pl-8 space-y-1 text-[#6B7280] list-circle list-inside">
-                                <li>L1 – Memilih Alat: Identifikasi alat yang tepat.</li>
-                                <li>L2 – Mengurutkan Langkah: Menyusun urutan prosedur.</li>
-                                <li>L3 – Menjawab Pertanyaan: Kuis sederhana pemahaman.</li>
-                                <li>L4 – Praktik Virtual: Simulasi Drag & Drop (Cuci tangan hingga tutup luka).</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <p class="font-bold text-[#1F2937]">4. Refleksi dan Emosi</p>
-                            <p class="text-[#6B7280] pl-4 italic">Anak memilih emotikon sesuai perasaannya setelah belajar.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="mb-6">
-                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
-                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">F</span> Panduan Orang Tua
-                    </h3>
-                    <div class="space-y-2 text-xs text-[#6B7280]">
-                        <p><span class="font-bold text-[#38BDF8]">Peran:</span> Mendampingi tanpa mengambil alih, memberi arahan, dan pujian positif.</p>
-                        <p><span class="font-bold text-[#38BDF8]">Langkah:</span> Pastikan anak fokus, dampingi pengisian nama, tonton video materi, biarkan anak mencoba level, dan diskusikan hasilnya.</p>
-                    </div>
-                </section>
-
-                <section class="mb-6">
-                    <h3 class="font-black text-[#1F2937] uppercase mb-2 border-b-2 border-[#A7F3D0] pb-1 flex items-center gap-2">
-                        <span class="bg-[#A7F3D0] text-[#1F2937] w-6 h-6 rounded-full flex items-center justify-center text-xs">G</span> Panduan Guru/Terapis
-                    </h3>
-                    <div class="space-y-2 text-xs text-[#6B7280]">
-                        <p><span class="font-bold text-[#38BDF8]">Langkah:</span> Gunakan video sebagai apersepsi, ajak anak menyelesaikan level secara bertahap, catat skor dan observasi perkembangan.</p>
-                        <p><span class="font-bold text-[#38BDF8]">Integrasi:</span> Kombinasikan dengan praktik langsung menggunakan alat tiruan secara individual maupun kelompok.</p>
-                    </div>
-                </section>
-
-                <section class="mb-6">
-                    <h3 class="font-black text-red-600 uppercase mb-2 border-b-2 border-red-100 pb-1 flex items-center gap-2">
-                        <span class="bg-red-100 text-red-600 w-6 h-6 rounded-full flex items-center justify-center text-xs">H</span> Keamanan
-                    </h3>
-                    <p class="text-xs text-red-500 bg-red-50 p-2 rounded-lg italic border border-red-100">Aplikasi tidak menggantikan perawatan medis profesional. Anak tetap harus didampingi orang dewasa. Materi difokuskan pada luka ringan.</p>
-                </section>
+                <div class="guide-section">
+                    <h2 class="guide-h2 text-red-500"><span class="bg-red-100 w-6 h-6 rounded-full flex items-center justify-center text-xs text-red-500">H</span> Keamanan & Etika</h2>
+                    <p class="text-[11px] italic">Aplikasi tidak menggantikan perawatan medis profesional. Anak harus selalu didampingi orang dewasa.</p>
+                </div>
+            </div>
 
             <div class="p-4 bg-gray-50 border-t border-gray-100">
-                <button onclick="closePanduan()" class="w-full bg-[#38BDF8] text-white font-bold py-3 rounded-2xl shadow-lg active:scale-95 transition-all uppercase text-sm">Tutup Panduan</button>
+                <button onclick="closePanduan()" class="w-full bg-[#38BDF8] text-white font-black py-3 rounded-2xl shadow-lg uppercase text-sm">Tutup Panduan</button>
             </div>
         </div>
     </div>
 
     <!-- MODAL KEMENANGAN -->
     <div id="victory-modal" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-[3rem] p-8 w-full max-w-sm text-center shadow-2xl border-4 border-[#A7F3D0] relative overflow-hidden animate-pop-in">
-            <div class="relative z-10">
-                <h2 class="text-3xl font-black text-orange-400 mb-2 drop-shadow-sm uppercase">Luar Biasa!</h2>
-                <h3 id="victory-name" class="text-xl font-bold text-[#38BDF8] mb-6 capitalize">Nama Murid</h3>
-                <div class="flex justify-center mb-6">
-                    <div class="w-32 h-32 bg-gradient-to-br from-[#A7F3D0] to-[#38BDF8] rounded-full flex items-center justify-center border-4 border-white shadow-lg animate-bounce-slow">
-                        <i data-lucide="trophy" class="w-16 h-16 text-white fill-current"></i>
-                    </div>
-                </div>
-                <button onclick="closeVictory()" class="w-full bg-[#38BDF8] hover:bg-[#0EA5E9] text-white font-bold py-4 rounded-2xl shadow-lg border-b-4 border-blue-700 active:scale-95 transition-all uppercase">Lanjutkan <i data-lucide="arrow-right" class="inline w-5 h-5 ml-1"></i></button>
-            </div>
+        <div class="bg-white rounded-[3rem] p-8 w-full max-w-sm text-center shadow-2xl border-4 border-[#A7F3D0] animate-pop-in">
+            <h2 class="text-3xl font-black text-orange-400 mb-2 uppercase">Hebat Sekali!</h2>
+            <h3 id="victory-name" class="text-xl font-bold text-[#38BDF8] mb-6 capitalize">Nama Murid</h3>
+            <div id="victory-star-container" class="flex justify-center mb-8 flex-wrap"></div>
+            <button onclick="closeVictory()" class="w-full bg-[#38BDF8] text-white font-bold py-4 rounded-2xl shadow-lg border-b-4 border-blue-700 active:scale-95 transition-all uppercase">Lanjutkan <i data-lucide="arrow-right" class="inline w-5 h-5 ml-1"></i></button>
         </div>
     </div>
-
-    <audio id="sfx-correct" src="audio/correct.mp3"></audio>
-    <audio id="sfx-wrong" src="audio/wrong.mp3"></audio>
-    <audio id="sfx-victory" src="audio/victory.mp3"></audio>
-    <audio id="sfx-click" src="audio/click.mp3"></audio>
 
     <script>
         const STATE = {
             screen: 'intro', name: '', score: 0, completedLevels: [], currentLevel: 1,
             selectedTools: [], orderStep: [], quizIndex: 0, woundState: 0, isAvatarVisible: true,
-            isMuted: false, relaxationStatus: 'ready', breathPhase: 'idle', breathCycle: 0
+            textSize: 'medium', fontType: 'comic', colorMode: 'normal', narration: true,
+            volume: 'medium', voiceSpeed: 'normal'
         };
 
-        const LEVEL_1_TOOLS = [
-            { id: 'air', name: 'Air Bersih', img: 'img/alat_air.png', iconFallback: 'droplets', correct: true },
-            { id: 'betadine', name: 'Antiseptik', img: 'img/alat_betadine.png', iconFallback: 'flask-conical', correct: true },
-            { id: 'mainan', name: 'Mainan', img: 'img/alat_mainan.png', iconFallback: 'gamepad-2', correct: false },
-            { id: 'tisu_steril', name: 'Tisu Steril', img: 'img/alat_kasa.png', iconFallback: 'file-text', correct: true },
-            { id: 'kasa_steril', name: 'Kasa Steril', img: 'img/alat_kasa_asli.png', iconFallback: 'square', correct: true },
-            { id: 'plester', name: 'Plester', img: 'img/alat_plester.png', iconFallback: 'bandage', correct: true }
-        ];
+        const ASSETS = {
+            'cuci': { icon: 'hand', color: 'asset-cuci', label: 'Mencuci Tangan' },
+            'air': { icon: 'droplets', color: 'asset-air', label: 'Air Bersih' },
+            'betadine': { icon: 'flask-conical', color: 'asset-betadine', label: 'Antiseptik' },
+            'tisu_steril': { icon: 'file-text', color: 'asset-tisu', label: 'Tisu Steril' },
+            'kasa_steril': { icon: 'square', color: 'asset-kasa', label: 'Kasa Steril' },
+            'plester': { icon: 'bandage', color: 'asset-plester', label: 'Plester' },
+            'mainan': { icon: 'gamepad-2', color: 'bg-gray-100', label: 'Mainan' }
+        };
 
         const LEVEL_2_STEPS = [
-            { id: 'tangan', label: 'Mencuci Tangan', img: 'img/langkah_cuci.png', iconFallback: 'soap' },
-            { id: 'air', label: 'Membersihkan Luka', img: 'img/langkah_air.png', iconFallback: 'droplets' },
-            { id: 'kering', label: 'Mengeringkan Luka', img: 'img/langkah_kering.png', iconFallback: 'file-text' }, 
-            { id: 'obat', label: 'Meneteskan Obat', img: 'img/langkah_obat.png', iconFallback: 'flask-conical' },
-            { id: 'tutup', label: 'Menutup Luka', img: 'img/langkah_tutup.png', iconFallback: 'square' },
-            { id: 'rekat', label: 'Merekatkan Plester', img: 'img/langkah_plester.png', iconFallback: 'bandage' }
+            { id: 'cuci', label: 'Mencuci Tangan', icon: 'hand' },
+            { id: 'air', label: 'Membersihkan Luka', icon: 'droplets' },
+            { id: 'kering', label: 'Mengeringkan Luka', icon: 'file-text' },
+            { id: 'obat', label: 'Meneteskan Obat', icon: 'flask-conical' },
+            { id: 'tutup', label: 'Menutup Luka', icon: 'square' },
+            { id: 'plester', label: 'Merekatkan Plester', icon: 'bandage' }
+        ];
+
+        const LEVEL_1_TOOLS = [
+            { id: 'air', correct: true }, { id: 'betadine', correct: true },
+            { id: 'mainan', correct: false }, { id: 'tisu_steril', correct: true },
+            { id: 'kasa_steril', correct: true }, { id: 'plester', correct: true }
         ];
 
         const LEVEL_3_QUIZ = [
-            { q: "Apa yang dapat terjadi jika luka tidak segera dirawat?", opts: [{ t: "Terjadi Infeksi", i: "skull", c: true }, { t: "Luka Cepat Sembuh", i: "smile", c: false }] },
-            { q: "Mengapa kita harus membersihkan luka?", opts: [{ t: "Untuk Membunuh Kuman", i: "sparkles", c: true }, { t: "Luka Semakin Sakit", i: "frown", c: false }] }
+            { q: "Apa yang harus kita lakukan sebelum menyentuh luka?", opts: [{ t: "Mencuci Tangan", c: true }, { t: "Langsung Menempel Plester", c: false }] },
+            { q: "Alat apa yang digunakan untuk merekatkan kasa pada luka?", opts: [{ t: "Plester", c: true }, { t: "Lem Kertas", c: false }] }
         ];
 
-        const sfx = {
-            correct: document.getElementById('sfx-correct'),
-            wrong: document.getElementById('sfx-wrong'),
-            victory: document.getElementById('sfx-victory'),
-            click: document.getElementById('sfx-click')
-        };
-
-        function playSfx(type) {
-            if(STATE.isMuted || !sfx[type]) return;
-            sfx[type].currentTime = 0;
-            sfx[type].play().catch(() => {});
-        }
-
+        // --- Fungsi Audio (Diperbarui untuk Suara Perempuan) ---
         function speak(text) {
-            if(STATE.isMuted) return;
+            if(!STATE.narration) return;
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
+                const ut = new SpeechSynthesisUtterance(text);
+                
+                // Mendapatkan daftar suara yang tersedia di perangkat
                 const voices = window.speechSynthesis.getVoices();
-                let selectedVoice = voices.find(v => v.lang.includes('id') && (v.name.toLowerCase().includes('gadis') || v.name.toLowerCase().includes('female')));
-                if (!selectedVoice) selectedVoice = voices.find(v => v.lang.includes('id'));
-                if (selectedVoice) utterance.voice = selectedVoice;
-                utterance.lang = 'id-ID';
-                utterance.rate = 0.95; 
-                utterance.pitch = 1.3; 
-                window.speechSynthesis.speak(utterance);
+                
+                // Mencari suara perempuan Indonesia dengan kriteria yang lebih ketat
+                let selectedVoice = voices.find(v => v.lang.startsWith('id') && 
+                    (v.name.toLowerCase().includes('female') || 
+                     v.name.toLowerCase().includes('perempuan') || 
+                     v.name.toLowerCase().includes('gadis') ||
+                     v.name.toLowerCase().includes('google') || // Google voices id-ID biasanya perempuan
+                     v.name.toLowerCase().includes('santi') ||
+                     v.name.toLowerCase().includes('damayanti')));
+                
+                // Jika tidak ditemukan suara perempuan id-ID, cari id-ID apa saja
+                if (!selectedVoice) selectedVoice = voices.find(v => v.lang.startsWith('id'));
+                
+                if (selectedVoice) {
+                    ut.voice = selectedVoice;
+                }
+                
+                ut.lang = 'id-ID';
+                ut.rate = STATE.voiceSpeed === 'slow' ? 0.75 : 0.95;
+                ut.pitch = 1.35; // Menaikkan pitch untuk membuat suara terdengar lebih feminin dan ramah
+                ut.volume = STATE.volume === 'low' ? 0.3 : (STATE.volume === 'high' ? 1.0 : 0.7);
+                
+                window.speechSynthesis.speak(ut);
             }
         }
 
-        function toggleMute() {
-            STATE.isMuted = !STATE.isMuted;
-            const icon = document.getElementById('mute-icon');
-            icon.setAttribute('data-lucide', STATE.isMuted ? 'volume-x' : 'volume-2');
-            if(STATE.isMuted) window.speechSynthesis.cancel();
-            lucide.createIcons();
-        }
+        // Pastikan daftar suara dimuat sebelum aplikasi digunakan
+        window.speechSynthesis.onvoiceschanged = () => {
+            console.log("Daftar suara diperbarui");
+        };
 
-        function openPanduan() { playSfx('click'); document.getElementById('guide-modal').classList.remove('hidden'); }
-        function closePanduan() { playSfx('click'); document.getElementById('guide-modal').classList.add('hidden'); }
-
-        window.handleImageError = (el) => { el.style.display = 'none'; if (el.nextElementSibling) el.nextElementSibling.style.display = 'block'; };
-        window.handleWoundError = (el) => { el.parentElement.innerHTML = '<div class="text-2xl font-black text-orange-300 uppercase text-center">Ilustrasi Luka</div>'; };
-
-        const app = document.getElementById('app');
-        const avatarContainer = document.getElementById('avatar-container');
-        const victoryModal = document.getElementById('victory-modal');
-        const victoryName = document.getElementById('victory-name');
-        const avatarBubble = document.getElementById('avatar-bubble');
-        const avatarText = document.getElementById('avatar-text');
+        // --- Navigation & UI ---
+        function navigate(s) { STATE.screen = s; render(); }
+        function openSettings() { renderSettingsMenu(); document.getElementById('settings-modal').classList.remove('hidden'); }
+        function closeSettings() { document.getElementById('settings-modal').classList.add('hidden'); }
+        function openPanduan() { document.getElementById('guide-modal').classList.remove('hidden'); }
+        function closePanduan() { document.getElementById('guide-modal').classList.add('hidden'); }
 
         function render() {
+            const app = document.getElementById('app');
             app.innerHTML = '';
-            if (STATE.screen === 'intro') {
-                document.getElementById('mute-btn').classList.add('hidden');
-                document.getElementById('guide-btn').classList.add('hidden');
-                renderIntro();
-            } else {
-                renderMonitoringHeader();
-                document.getElementById('mute-btn').classList.remove('hidden');
-                document.getElementById('guide-btn').classList.remove('hidden');
-                const wrapper = document.createElement('div');
-                wrapper.className = "flex-1 overflow-y-auto no-scrollbar w-full h-full pt-20"; 
+            if (STATE.screen === 'intro') renderIntro(); 
+            else {
+                renderHeader();
                 const content = document.createElement('div');
-                content.className = "p-6 pb-32"; 
+                content.className = "flex-1 overflow-y-auto no-scrollbar p-6 pt-24 pb-32";
                 if (STATE.screen === 'menu') renderMenu(content);
-                else if (STATE.screen === 'level_select') renderLevelSelect(content);
                 else if (STATE.screen === 'materi') renderMateri(content);
+                else if (STATE.screen === 'level_select') renderLevelSelect(content);
                 else if (STATE.screen === 'game') renderGame(content);
-                else if (STATE.screen === 'reflection') renderReflection(content);
                 else if (STATE.screen === 'final_score') renderFinalScore(content);
-                else if (STATE.screen === 'relaxation') renderRelaxation(content);
-                wrapper.appendChild(content);
-                app.appendChild(wrapper);
+                app.appendChild(content);
             }
             lucide.createIcons();
         }
 
-        function updateAvatar(mood, text) {
-            if (text) {
-                avatarText.innerText = text;
-                avatarBubble.classList.remove('hidden');
-                avatarBubble.classList.remove('animate-pop-in');
-                void avatarBubble.offsetWidth; 
-                avatarBubble.classList.add('animate-pop-in');
-                speak(text);
-            } else { avatarBubble.classList.add('hidden'); }
-        }
-
-        function toggleAvatar() {
-            STATE.isAvatarVisible = !STATE.isAvatarVisible;
-            avatarContainer.classList.toggle('avatar-hidden', !STATE.isAvatarVisible);
-        }
-
-        function renderMonitoringHeader() {
-            const levelCount = STATE.completedLevels.length;
-            const progress = (levelCount / 4) * 100;
-            const el = document.createElement('div');
-            el.className = "absolute top-0 left-0 right-0 z-40 px-4 pt-4 pb-2 bg-gradient-to-b from-[#FFF7ED] via-[#FFF7ED]/90 to-transparent";
-            el.innerHTML = `
-                <div class="bg-white rounded-2xl shadow-lg border-2 border-[#A7F3D0] p-3 flex items-center justify-between gap-3">
-                    <button onclick="navigate('menu')" class="bg-[#FFF7ED] text-[#1F2937] p-2 rounded-xl hover:bg-[#A7F3D0] active:scale-95 transition-all border border-[#A7F3D0]"><i data-lucide="home" class="w-6 h-6"></i></button>
-                    <div class="flex-1 flex flex-col justify-center">
-                        <div class="flex justify-between items-end mb-1 px-1"><span class="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">KEMAJUAN</span><span class="text-[10px] font-bold text-[#38BDF8]">${levelCount}/4</span></div>
-                        <div class="w-full h-4 bg-gray-100 rounded-full overflow-hidden border border-gray-200"><div class="h-full bg-[#38BDF8] progress-striped transition-all duration-500" style="width: ${progress}%"></div></div>
+        function renderHeader() {
+            const app = document.getElementById('app');
+            const header = document.createElement('div');
+            header.className = "absolute top-0 left-0 right-0 z-40 p-4 bg-gradient-to-b from-[#FFF7ED] to-transparent";
+            header.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-lg border-2 border-[#A7F3D0] p-3 flex items-center gap-2">
+                    <div class="flex gap-1">
+                        <button onclick="navigate('menu')" class="bg-[#FFF7ED] p-2 rounded-xl border border-[#A7F3D0] active:scale-95 transition-all"><i data-lucide="home" class="w-6 h-6"></i></button>
+                        <button onclick="openSettings()" class="bg-[#FFF7ED] p-2 rounded-xl border border-orange-200 text-orange-400 active:scale-95 transition-all"><i data-lucide="settings" class="w-6 h-6"></i></button>
                     </div>
-                    <div class="flex flex-col items-center bg-[#A7F3D0]/20 px-3 py-1 rounded-xl border border-[#A7F3D0] min-w-[60px]"><span class="text-[8px] font-bold text-[#1F2937] uppercase mb-0.5">SKOR</span><div class="flex items-center gap-1"><i data-lucide="star" class="text-orange-400 w-4 h-4 fill-current"></i><span class="font-black text-[#1F2937] text-lg leading-none">${STATE.score}</span></div></div>
+                    <div class="flex-1 px-1">
+                        <div class="w-full h-3 bg-gray-100 rounded-full overflow-hidden border"><div class="h-full bg-[#38BDF8] progress-striped transition-all" style="width: ${(STATE.completedLevels.length/4)*100}%"></div></div>
+                    </div>
+                    <div class="bg-[#A7F3D0]/20 px-2 py-1 rounded-xl border border-[#A7F3D0] text-center min-w-[40px]"><span class="font-black text-sm">${STATE.score}</span></div>
                 </div>`;
-            app.appendChild(el);
+            app.appendChild(header);
         }
 
-        function showVictory() {
-            victoryName.innerText = STATE.name || "Teman";
-            victoryModal.classList.remove('hidden');
-            playSfx('victory');
-            updateAvatar('excited', 'Hebat! Anda berhasil menyelesaikan tugas ini dengan benar!');
-        }
-
-        function closeVictory() {
-            playSfx('click');
-            victoryModal.classList.add('hidden');
-            navigate(STATE.currentLevel === 4 ? 'reflection' : 'level_select');
+        function updateAvatarUI(text) {
+            const bubble = document.getElementById('avatar-bubble');
+            const textEl = document.getElementById('avatar-text');
+            if (text) { textEl.innerText = text; bubble.classList.remove('hidden'); speak(text); } else bubble.classList.add('hidden');
         }
 
         function renderIntro() {
+            const app = document.getElementById('app');
             const el = document.createElement('div');
             el.className = "flex flex-col items-center justify-center h-full p-6 text-center";
             el.innerHTML = `
-                <div class="w-28 h-28 bg-white rounded-full shadow-lg flex items-center justify-center mb-6 animate-bounce-slow border-4 border-[#A7F3D0]"><i data-lucide="heart-handshake" class="w-14 h-14 text-orange-300"></i></div>
-                <h1 class="text-3xl font-extrabold text-[#1F2937] mb-2">Merawat Luka</h1>
-                <p class="text-[#6B7280] mb-8 font-medium">Belajar merawat luka sendiri!</p>
-                <div class="w-full max-w-xs bg-white p-6 rounded-3xl shadow-xl border border-orange-50">
-                    <label class="block text-left text-xs font-bold text-[#6B7280] mb-2 ml-1 uppercase">Siapa Nama Anda?</label>
-                    <input type="text" id="inputName" class="w-full bg-[#FFF7ED] border-2 border-[#A7F3D0] rounded-xl p-3 text-center text-lg font-bold text-[#1F2937] focus:outline-none focus:border-[#38BDF8] placeholder-orange-200" placeholder="Masukkan nama...">
-                    <button id="btnStart" class="mt-6 w-full bg-[#38BDF8] text-white font-bold py-3 rounded-xl shadow-lg flex items-center justify-center gap-2 opacity-50 cursor-not-allowed transition-all uppercase" disabled>Mulai <i data-lucide="play-circle" class="w-5 h-5"></i></button>
+                <div class="w-24 h-24 bg-white rounded-full shadow-lg flex items-center justify-center mb-6 animate-bounce-slow border-4 border-[#A7F3D0]"><i data-lucide="heart-pulse" class="w-12 h-12 text-orange-400"></i></div>
+                <h1 class="text-2xl font-black mb-2 uppercase text-[#1F2937]">Merawat Luka</h1>
+                <p class="text-sm text-gray-500 mb-8 font-bold px-4">Mari belajar merawat luka sendiri!</p>
+                <div class="w-full max-w-xs bg-white p-6 rounded-[2.5rem] shadow-xl border-2 border-orange-50">
+                    <input type="text" id="inputName" class="w-full border-2 border-[#A7F3D0] rounded-2xl p-4 text-center font-bold text-lg mb-4 bg-orange-50/30" placeholder="Siapa namamu?">
+                    <button id="btnStart" class="w-full bg-[#38BDF8] text-white font-black py-4 rounded-2xl shadow-lg opacity-50 uppercase tracking-widest" disabled>Mulai Belajar</button>
                 </div>`;
             app.appendChild(el);
             const input = document.getElementById('inputName');
             const btn = document.getElementById('btnStart');
-            input.addEventListener('input', () => {
-                const isValid = input.value.trim().length > 0;
-                btn.disabled = !isValid;
-                btn.classList.toggle('opacity-50', !isValid);
-                btn.classList.toggle('cursor-not-allowed', !isValid);
-            });
-            btn.onclick = () => { playSfx('click'); STATE.name = input.value; navigate('menu'); updateAvatar('happy', `Selamat datang ${STATE.name}! Mari kita mulai belajar.`); };
+            input.oninput = () => { const ok = input.value.trim().length > 0; btn.disabled = !ok; btn.classList.toggle('opacity-50', !ok); };
+            btn.onclick = () => { STATE.name = input.value; navigate('menu'); updateAvatarUI(`Halo ${STATE.name}, mari kita mulai belajar merawat luka hari ini!`); };
         }
 
-        function renderMenu(container) {
-            container.innerHTML = `
-                <div class="mb-4 text-center"><h2 class="text-xl font-bold text-[#1F2937]">Halo, ${STATE.name}!</h2><p class="text-sm text-[#6B7280]">Silakan pilih kegiatan hari ini</p></div>
-                <div class="grid gap-4">
-                    <button onclick="navigate('materi')" class="bg-[#A7F3D0]/40 border-2 border-[#A7F3D0] p-4 rounded-2xl flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-sm"><div class="bg-white p-3 rounded-xl text-[#1F2937]"><i data-lucide="book-open"></i></div><div class="text-left"><h3 class="font-bold text-[#1F2937] text-lg">Materi Video</h3><p class="text-xs text-[#6B7280] font-bold uppercase">Mari menonton!</p></div></button>
-                    <button onclick="navigate('level_select')" class="bg-[#38BDF8]/20 border-2 border-[#38BDF8] p-4 rounded-2xl flex items-center gap-4 hover:scale-[1.02] transition-transform shadow-sm"><div class="bg-white p-3 rounded-xl text-[#38BDF8]"><i data-lucide="gamepad-2"></i></div><div class="text-left"><h3 class="font-bold text-[#1F2937] text-lg">Mulai Latihan</h3><p class="text-xs text-[#6B7280] font-bold uppercase">Tingkat 1 - 4</p></div></button>
+        function renderMenu(c) {
+            c.innerHTML = `
+                <div class="grid gap-4 mt-4">
+                    <button onclick="navigate('materi')" class="bg-[#A7F3D0]/30 border-2 border-[#A7F3D0] p-6 rounded-[2.5rem] flex items-center gap-4 text-left shadow-sm active:scale-95 transition-all"><div class="bg-white p-4 rounded-2xl shadow-sm text-green-600"><i data-lucide="book-open" class="w-8 h-8"></i></div><div><h3 class="font-black text-xl">Materi Belajar</h3><p class="text-[10px] font-bold uppercase text-gray-400">6 Langkah Benar</p></div></button>
+                    <button onclick="navigate('level_select')" class="bg-[#38BDF8]/20 border-2 border-[#38BDF8] p-6 rounded-[2.5rem] flex items-center gap-4 text-left shadow-sm active:scale-95 transition-all"><div class="bg-white p-4 rounded-2xl shadow-sm text-blue-500"><i data-lucide="gamepad-2" class="w-8 h-8"></i></div><div><h3 class="font-black text-xl">Latihan Mandiri</h3><p class="text-[10px] font-bold uppercase text-gray-400">Uji Kemampuanmu</p></div></button>
+                </div>
+                <div class="mt-8 p-5 bg-white/50 rounded-3xl border-2 border-orange-100 flex flex-col items-center">
+                    <p class="text-xs font-bold text-gray-400 uppercase mb-3">Butuh Bantuan?</p>
+                    <button onclick="openPanduan()" class="flex items-center gap-2 bg-white px-6 py-3 rounded-2xl shadow-sm border border-orange-200 text-orange-400 font-bold active:scale-95 transition-all"><i data-lucide="book-open" class="w-5 h-5"></i> Buku Panduan</button>
                 </div>`;
-            updateAvatar('happy', 'Pilih menu belajar atau bermain yang Anda inginkan.');
         }
 
-        function renderLevelSelect(container) {
-            container.innerHTML = `<h2 class="text-xl font-bold text-[#1F2937] mb-4 text-center">Pilih Tingkat</h2><div class="grid grid-cols-2 gap-3">${[1,2,3,4].map(l => { const isDone = STATE.completedLevels.includes(l); return `<button onclick="startLevel(${l})" class="relative bg-white border-b-4 ${isDone ? 'border-[#A7F3D0] bg-orange-50' : 'border-[#38BDF8]'} p-3 rounded-2xl flex flex-col items-center justify-center gap-2 h-28 hover:border-[#A7F3D0] transition-all shadow-sm active:scale-95">${isDone ? '<div class="absolute top-2 right-2 text-[#A7F3D0]"><i data-lucide="check-circle" class="w-4 h-4"></i></div>' : ''}<div class="w-8 h-8 ${isDone ? 'bg-[#A7F3D0] text-white' : 'bg-[#38BDF8] text-white'} rounded-full flex items-center justify-center font-black text-lg">${l}</div><span class="text-[10px] font-bold text-[#6B7280] uppercase text-center">${l===1?'Pilih Alat':l===2?'Urutan':l===3?'Kuis':'Simulasi'}</span></button>`; }).join('')}</div>`;
-            updateAvatar('excited', 'Silakan pilih tingkat yang ingin Anda mainkan.');
+        function renderMateri(c) {
+            c.innerHTML = `
+                <h2 class="font-black text-center mb-4 uppercase text-[#1F2937]">6 Langkah Perawatan</h2>
+                <div class="hd-frame rounded-[2.5rem] aspect-video overflow-hidden mb-8 bg-gray-900 flex items-center justify-center"><iframe class="w-full h-full" src="https://www.youtube.com/embed/p7nKQH8sAfw" frameborder="0" allowfullscreen></iframe></div>
+                <div class="space-y-3 pb-6">${LEVEL_2_STEPS.map((s,i) => `<div class="bg-white p-4 rounded-2xl flex items-center gap-4 text-sm border-2 border-orange-50 shadow-sm transition-transform hover:scale-[1.02]"><span class="w-8 h-8 bg-[#A7F3D0] rounded-full flex items-center justify-center font-black text-xs">${i+1}</span> <b class="text-[#1F2937] uppercase text-[10px] tracking-tight">${s.label}</b></div>`).join('')}</div>
+                <button onclick="navigate('level_select')" class="w-full bg-[#38BDF8] text-white py-5 rounded-[2rem] font-black uppercase shadow-lg border-b-8 border-blue-700 active:translate-y-2">Ayo Berlatih!</button>`;
         }
 
-        function renderMateri(container) {
-            container.innerHTML = `<div class="bg-black rounded-2xl aspect-video w-full mb-6 border-4 border-white shadow-lg overflow-hidden"><iframe class="w-full h-full" src="https://www.youtube.com/embed/p7nKQH8sAfw" title="YouTube" frameborder="0" allowfullscreen></iframe></div><h3 class="font-bold text-[#1F2937] mb-2">Langkah Perawatan Luka:</h3><div class="space-y-2 pb-8">${LEVEL_2_STEPS.map((s,i) => `<div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-orange-50"><div class="w-8 h-8 bg-[#A7F3D0] rounded-full flex items-center justify-center font-bold text-[#1F2937] text-[12px]">${i+1}</div><span class="text-sm font-medium text-[#6B7280]">${s.label}</span></div>`).join('')}</div>`;
-            updateAvatar('happy', 'Perhatikan video tersebut dengan saksama.');
+        function renderLevelSelect(c) {
+            c.innerHTML = `
+                <h2 class="font-black mb-8 text-center uppercase tracking-widest text-gray-400 text-sm">Pilih Tantangan</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    ${[1,2,3,4].map(l => { const done = STATE.completedLevels.includes(l); return `<button onclick="startLevel(${l})" class="bg-white border-2 ${done ? 'border-[#A7F3D0]' : 'border-gray-100'} p-5 rounded-[2.5rem] flex flex-col items-center gap-3 shadow-md relative transition-all active:scale-95">${done ? '<i data-lucide="star" class="absolute top-3 right-3 w-6 h-6 text-orange-400 fill-current animate-star"></i>' : ''}<div class="w-14 h-14 ${done ? 'bg-[#A7F3D0] text-white' : 'bg-gray-100 text-gray-300'} rounded-full flex items-center justify-center font-black text-2xl">${l}</div><span class="text-[10px] font-black uppercase text-[#1F2937]">${l==1?'Pilih Alat':l==2?'Urutan':l==3?'Kuis':'Simulasi'}</span></button>`; }).join('')}
+                </div>`;
         }
 
-        function startLevel(lvl) { playSfx('click'); STATE.currentLevel = lvl; STATE.selectedTools = []; STATE.orderStep = []; STATE.quizIndex = 0; STATE.woundState = 0; STATE.screen = 'game'; render(); }
+        function startLevel(l) { STATE.currentLevel = l; STATE.selectedTools = []; STATE.orderStep = []; STATE.quizIndex = 0; STATE.woundState = 0; STATE.screen = 'game'; render(); }
 
-        function renderGame(container) {
-            let header = `<div class="flex justify-center mb-4"><div class="bg-[#A7F3D0] text-[#1F2937] px-4 py-1 rounded-full text-xs font-bold tracking-wider shadow-md uppercase">Tingkat ${STATE.currentLevel}</div></div>`;
+        function renderGame(c) {
+            const header = `<div class="text-center mb-6"><span class="bg-[#38BDF8]/10 text-[#38BDF8] px-5 py-1.5 rounded-full text-[10px] font-black uppercase border-2 border-[#38BDF8]/20 tracking-widest">Tingkat ${STATE.currentLevel}</span></div>`;
+            
             if (STATE.currentLevel === 1) {
-                updateAvatar('excited', 'Pilihlah alat-alat P3K yang benar.');
-                container.innerHTML = header + `<div class="grid grid-cols-2 gap-3 mb-6">${LEVEL_1_TOOLS.map(t => { const isSel = STATE.selectedTools.includes(t.id); return `<button onclick="toggleTool('${t.id}')" class="p-4 rounded-3xl border-2 flex flex-col items-center gap-3 transition-all active:scale-95 ${isSel ? 'bg-[#A7F3D0]/20 border-[#A7F3D0]' : 'bg-white border-gray-100'}"><div class="w-20 h-20 flex items-center justify-center bg-gray-50 rounded-2xl p-1"><img src="${t.img}" class="w-full h-full object-contain" onerror="handleImageError(this)"><i data-lucide="${t.iconFallback}" class="w-12 h-12 text-gray-400 hidden"></i></div><span class="text-[11px] text-center leading-tight font-bold ${isSel ? 'text-[#1F2937]' : 'text-[#6B7280]'}">${t.name}</span></button>`; }).join('')}</div><button onclick="checkLevel1()" class="w-full bg-[#38BDF8] text-white font-bold py-4 rounded-2xl shadow-lg border-b-4 border-blue-700 active:translate-y-1 active:border-b-0 text-lg uppercase">Periksa Jawaban</button>`;
+                updateAvatarUI("Cari dan klik 5 alat yang kita butuhkan untuk merawat luka.");
+                c.innerHTML = header + `<div id="tool-grid" class="grid grid-cols-2 gap-4 mb-8">${LEVEL_1_TOOLS.map(t => { const asset = ASSETS[t.id]; const isCorrectAlready = STATE.selectedTools.includes(t.id); return `<button id="btn-${t.id}" onclick="handleToolClick('${t.id}')" class="p-5 rounded-[2rem] border-4 transition-all flex flex-col items-center gap-3 ${isCorrectAlready ? 'border-[#A7F3D0] bg-[#A7F3D0]/10' : 'border-white bg-white shadow-md'}"><div class="w-16 h-16 rounded-3xl ${asset.color} flex items-center justify-center shadow-sm border-2 border-white"><i data-lucide="${asset.icon}" class="w-10 h-10"></i></div><span class="text-[10px] font-black text-center text-[#1F2937] uppercase leading-tight">${asset.label}</span></button>`; }).join('')}</div><div class="text-center font-black text-blue-500 uppercase text-xs">Menemukan: ${STATE.selectedTools.length} / 5</div>`;
             } else if (STATE.currentLevel === 2) {
-                updateAvatar('happy', 'Klik urutan yang benar dari 1 hingga 6.');
-                container.innerHTML = header + `<div class="flex gap-2 justify-center mb-8 overflow-x-auto py-2 no-scrollbar">${[0,1,2,3,4,5].map(i => `<div class="min-w-[85px] h-[110px] bg-orange-50 border-2 border-dashed border-[#A7F3D0] rounded-[1.25rem] flex items-center justify-center overflow-hidden p-2 shadow-inner">${STATE.orderStep[i] ? `<img src="${STATE.orderStep[i].img}" class="w-full h-full object-contain animate-pop-in" onerror="handleImageError(this)"><i data-lucide="${STATE.orderStep[i].iconFallback}" class="hidden w-10 h-10 text-[#38BDF8]"></i>` : `<span class="text-orange-200 font-black text-2xl">${i+1}</span>`}</div>`).join('')}</div><div class="grid grid-cols-2 gap-4 mb-6">${LEVEL_2_STEPS.map(s => { const used = STATE.orderStep.find(x => x.id === s.id); return `<button onclick="addOrder('${s.id}')" ${used?'disabled':''} class="bg-white p-5 rounded-[2rem] border-2 border-gray-100 flex flex-col items-center gap-3 active:scale-95 shadow-md transition-all ${used?'opacity-30 border-gray-50 bg-gray-50':''}"><div class="w-24 h-24 flex-shrink-0 flex items-center justify-center bg-orange-50/50 rounded-2xl p-2 border-2 border-[#A7F3D0]"><img src="${s.img}" class="w-full h-full object-contain" onerror="handleImageError(this)"><i data-lucide="${s.iconFallback}" class="hidden w-12 h-12 text-orange-400"></i></div><span class="text-[12px] font-black text-[#1F2937] leading-tight text-center uppercase tracking-wide">${s.label}</span></button>`; }).join('')}</div><button onclick="resetOrder()" class="text-center w-full text-[#6B7280] text-sm font-bold uppercase tracking-widest hover:text-[#38BDF8] transition-colors">Ulangi Urutan</button>`;
+                updateAvatarUI("Klik urutan yang benar dari nomor 1 sampai 6 ya!");
+                c.innerHTML = header + `<div class="flex gap-2 mb-10 overflow-x-auto pb-4 no-scrollbar min-h-[110px]">${[0,1,2,3,4,5].map(i => { const item = STATE.orderStep[i]; return `<div class="min-w-[80px] h-[100px] border-4 border-dashed border-orange-100 rounded-3xl flex flex-col items-center justify-center bg-white shadow-inner p-2">${item ? `<i data-lucide="${item.icon}" class="w-10 h-10 text-[#38BDF8] animate-pop-in"></i><span class="text-[8px] font-black text-center mt-1 leading-tight uppercase text-[#1F2937]">${item.label}</span>` : `<span class="text-orange-50 font-black text-3xl">${i+1}</span>`}</div>`; }).join('')}</div><div class="grid grid-cols-2 gap-4 mb-6">${LEVEL_2_STEPS.map(s => { const used = STATE.orderStep.find(x => x.id === s.id); return `<button onclick="addOrderLevel2('${s.id}')" ${used?'disabled':''} class="bg-white p-6 rounded-[2.5rem] border-2 border-gray-100 flex flex-col items-center justify-center transition-all ${used?'opacity-20':'shadow-lg active:scale-95 hover:border-[#38BDF8]'}"><div class="w-20 h-20 bg-orange-50 rounded-2xl flex items-center justify-center mb-3"><i data-lucide="${s.icon}" class="w-12 h-12 text-orange-400"></i></div><span class="text-[10px] font-black text-center uppercase text-[#1F2937] tracking-tighter leading-tight">${s.label}</span></button>`; }).join('')}</div>`;
             } else if (STATE.currentLevel === 3) {
-                updateAvatar('excited', 'Jawablah pertanyaan berikut.');
-                const q = LEVEL_3_QUIZ[STATE.quizIndex];
-                container.innerHTML = header + `<div class="bg-white p-8 rounded-[2rem] shadow-sm border border-[#A7F3D0] mb-8 text-center"><h3 class="font-bold text-[#1F2937] text-xl leading-tight">${q.q}</h3></div><div class="space-y-4">${q.opts.map(opt => `<button onclick="answerQuiz(${opt.c})" class="w-full bg-white border-2 border-gray-100 p-5 rounded-2xl flex items-center gap-5 active:scale-95 active:bg-[#A7F3D0]/20 shadow-sm"><div class="bg-orange-50 w-12 h-12 rounded-full flex items-center justify-center text-orange-400"><i data-lucide="${opt.i}" class="w-7 h-7"></i></div><span class="font-bold text-[#1F2937] text-lg">${opt.t}</span></button>`).join('')}</div>`;
+                const q = LEVEL_3_QUIZ[STATE.quizIndex]; updateAvatarUI(q.q);
+                c.innerHTML = header + `<div class="bg-white p-10 rounded-[3rem] shadow-xl border-4 border-white mb-8 text-center"><h3 class="font-black text-xl leading-snug text-[#1F2937]">${q.q}</h3></div><div class="space-y-4">${q.opts.map(opt => `<button onclick="answerQuiz(${opt.c})" class="w-full bg-white p-6 rounded-[2.5rem] border-2 border-gray-100 shadow-md active:bg-blue-50 font-black text-lg transition-all text-[#1F2937]">${opt.t}</button>`).join('')}</div>`;
             } else if (STATE.currentLevel === 4) {
-                updateAvatar('happy', 'Seret alat P3K ke arah luka.');
-                let woundImg = 'img/karakter_luka_kotor.png';
-                if(STATE.woundState===1) woundImg = 'img/karakter_tangan_bersih.png';
-                if(STATE.woundState===2) woundImg = 'img/karakter_luka_bersih.png';
-                if(STATE.woundState===3) woundImg = 'img/karakter_luka_kering.png';
-                if(STATE.woundState===4) woundImg = 'img/karakter_luka_obat.png';
-                if(STATE.woundState===5) woundImg = 'img/karakter_luka_tutup.png';
-                if(STATE.woundState===6) woundImg = 'img/karakter_luka_plester.png';
-                container.innerHTML = header + `<div class="flex justify-center mb-8 mt-4"><div id="drop-zone" class="w-80 h-80 relative flex items-center justify-center transition-transform duration-300"><img src="${woundImg}" class="w-full h-full object-contain" onerror="handleWoundError(this)"></div></div><p class="text-center text-[10px] text-[#6B7280] mb-3 font-bold uppercase tracking-widest">Kotak Peralatan (Seret Alat)</p><div class="bg-white p-5 rounded-[2.5rem] border-2 border-[#A7F3D0] shadow-inner flex justify-around flex-wrap gap-4">${renderDraggableTool('sabun', 'img/alat_sabun.png', 'Sabun')}${renderDraggableTool('air', 'img/alat_air.png', 'Air')}${renderDraggableTool('tisu', 'img/alat_kasa.png', 'Tisu')}${renderDraggableTool('obat', 'img/alat_betadine.png', 'Obat')}${renderDraggableTool('kasa', 'img/alat_kasa_asli.png', 'Kasa')}${renderDraggableTool('plester', 'img/alat_plester.png', 'Plester')}</div>`;
+                updateAvatarUI("Ayo tarik alat dari kotak ke arah bingkai gambar HD.");
+                const wounds = [
+                    { icon: 'hand', text: 'Tangan Kotor (Mencuci Tangan)', color: 'text-blue-400' }, { icon: 'droplets', text: 'Bilas Luka (Membersihkan)', color: 'text-blue-600' },
+                    { icon: 'file-text', text: 'Luka Basah (Mengeringkan)', color: 'text-gray-400' }, { icon: 'flask-conical', text: 'Beri Obat (Meneteskan)', color: 'text-red-600' },
+                    { icon: 'square', text: 'Tutup Luka (Menutup)', color: 'text-gray-300' }, { icon: 'bandage', text: 'Selesai (Merekatkan Plester)', color: 'text-yellow-600' },
+                    { icon: 'smile', text: 'Hebat! Luka sudah rapi.', color: 'text-green-500' }
+                ];
+                const cur = wounds[STATE.woundState];
+                c.innerHTML = header + `<div class="flex flex-col items-center mb-10"><div id="drop-zone" class="w-80 h-80 hd-frame bg-white rounded-[3rem] flex flex-col items-center justify-center relative overflow-hidden"><i data-lucide="${cur.icon}" class="w-32 h-32 ${cur.color} animate-pulse-soft"></i><div class="absolute bottom-6 bg-white/90 px-6 py-2 rounded-full shadow-sm border border-gray-100"><span class="text-[10px] font-black uppercase text-[#1F2937]">${cur.text}</span></div></div></div><div class="bg-white p-6 rounded-[3rem] border-2 border-orange-50 shadow-inner flex flex-wrap justify-center gap-5">${['cuci', 'air', 'tisu_steril', 'betadine', 'kasa_steril', 'plester'].map(id => { const a = ASSETS[id]; return `<div class="draggable-item flex flex-col items-center gap-2 w-16" data-id="${id}"><div class="w-14 h-14 rounded-2xl ${a.color} flex items-center justify-center shadow-md border-2 border-white"><i data-lucide="${a.icon}" class="w-8 h-8"></i></div><span class="text-[8px] font-black uppercase text-center leading-tight text-[#1F2937]">${a.label}</span></div>`; }).join('')}</div>`;
                 setTimeout(initDragAndDrop, 100);
             }
         }
+
+        // --- Logic Handlers ---
+        function handleToolClick(id) {
+            const tool = LEVEL_1_TOOLS.find(t => t.id === id);
+            const btn = document.getElementById(`btn-${id}`);
+            if (tool && tool.correct) {
+                if (!STATE.selectedTools.includes(id)) {
+                    STATE.selectedTools.push(id);
+                    btn.classList.add('border-[#A7F3D0]', 'bg-[#A7F3D0]/10', 'animate-pop-in');
+                    updateAvatarUI("Benar! Itu alat yang kita butuhkan.");
+                    if (STATE.selectedTools.length === 5) { STATE.score += 25; setTimeout(() => complete(1), 800); } else render();
+                }
+            } else if (btn) {
+                btn.classList.add('border-red-400', 'bg-red-50', 'animate-shake');
+                updateAvatarUI("Ups, alat itu tidak kita butuhkan. Coba cari yang lain ya!");
+                setTimeout(() => btn.classList.remove('border-red-400', 'bg-red-50', 'animate-shake'), 1000);
+            }
+        }
+
+        function addOrderLevel2(id) { const targetId = LEVEL_2_STEPS[STATE.orderStep.length].id; if(id === targetId) { STATE.orderStep.push(LEVEL_2_STEPS.find(x => x.id === id)); if(STATE.orderStep.length === 6) { STATE.score += 25; complete(2); } else render(); } else updateAvatarUI("Hampir benar, tapi urutannya bukan itu. Pikirkan lagi ya!"); }
+        function answerQuiz(c) { if(c) { if(STATE.quizIndex < LEVEL_3_QUIZ.length - 1) { STATE.quizIndex++; render(); } else { STATE.score += 25; complete(3); } } else updateAvatarUI("Belum tepat, ayo coba lagi!"); }
+        function complete(l) { if(!STATE.completedLevels.includes(l)) STATE.completedLevels.push(l); showVictory(); }
         
-        function renderDraggableTool(id, imgPath, label) { return `<div class="draggable-item flex flex-col items-center gap-2 w-20" data-id="${id}" draggable="true"><div class="w-16 h-16 bg-white rounded-2xl border-2 border-orange-50 flex items-center justify-center shadow-md p-1.5 transition-transform"><img src="${imgPath}" class="w-full h-full object-contain pointer-events-none" onerror="handleImageError(this)"></div><span class="text-[9px] font-black text-[#6B7280] uppercase text-center leading-none">${label}</span></div>`; }
-
-        function completeLevel(lvl) { if (!STATE.completedLevels.includes(lvl)) STATE.completedLevels.push(lvl); }
-        function navigate(s) { window.speechSynthesis.cancel(); playSfx('click'); STATE.screen = s; render(); }
-        function toggleTool(id) { playSfx('click'); const idx = STATE.selectedTools.indexOf(id); if(idx > -1) STATE.selectedTools.splice(idx, 1); else STATE.selectedTools.push(id); render(); }
-        
-        function checkLevel1() {
-            const correct = ['sabun', 'air', 'betadine', 'tisu_steril', 'kasa_steril', 'plester'];
-            const isCorrect = correct.every(v => STATE.selectedTools.includes(v)) && STATE.selectedTools.every(v => correct.includes(v));
-            if(isCorrect) { playSfx('correct'); STATE.score += 20; completeLevel(1); setTimeout(showVictory, 500); } 
-            else { playSfx('wrong'); updateAvatar('sad', 'Jawaban Anda belum tepat.'); }
+        function showVictory() {
+            document.getElementById('victory-name').innerText = STATE.name;
+            const container = document.getElementById('victory-star-container');
+            container.innerHTML = `<div class="bg-white/50 p-6 rounded-[2.5rem] border-4 border-orange-100 flex gap-4 items-center justify-center animate-bounce-slow shadow-inner">${Array.from({length: STATE.currentLevel}, (_, i) => `<i data-lucide="star" class="w-12 h-12 text-orange-400 fill-current animate-star" style="animation-delay: ${i*0.15}s"></i>`).join('')}</div>`;
+            document.getElementById('victory-modal').classList.remove('hidden'); lucide.createIcons();
+            updateAvatarUI(`Wah, ${STATE.name} pintar sekali! Kamu dapat ${STATE.currentLevel} bintang.`);
         }
 
-        function addOrder(id) {
-            playSfx('click');
-            if(id === LEVEL_2_STEPS[STATE.orderStep.length].id) {
-                STATE.orderStep.push(LEVEL_2_STEPS.find(x => x.id === id));
-                if(STATE.orderStep.length === 6) { playSfx('correct'); STATE.score += 25; completeLevel(2); setTimeout(showVictory, 500); } 
-                else { render(); updateAvatar('happy', 'Benar, silakan lanjutkan.'); }
-            } else { playSfx('wrong'); updateAvatar('sad', 'Urutan salah.'); }
+        function closeVictory() { document.getElementById('victory-modal').classList.add('hidden'); navigate(STATE.completedLevels.length === 4 ? 'final_score' : 'level_select'); }
+
+        // --- Settings Management ---
+        function renderSettingsMenu() {
+            const content = document.getElementById('settings-content');
+            document.getElementById('settings-title').innerText = "Pengaturan";
+            content.innerHTML = `
+                <div onclick="renderTampilanSettings()" class="flex items-center justify-between p-5 bg-blue-50 rounded-3xl cursor-pointer border-2 border-transparent hover:border-blue-200">
+                    <div class="flex items-center gap-4"><div class="bg-white p-3 rounded-2xl text-blue-500 shadow-sm"><i data-lucide="monitor"></i></div><span class="font-bold text-lg">Tampilan</span></div>
+                    <i data-lucide="chevron-right" class="text-blue-300"></i>
+                </div>
+                <div onclick="renderSuaraSettings()" class="flex items-center justify-between p-5 bg-green-50 rounded-3xl cursor-pointer border-2 border-transparent hover:border-green-200">
+                    <div class="flex items-center gap-4"><div class="bg-white p-3 rounded-2xl text-green-500 shadow-sm"><i data-lucide="volume-2"></i></div><span class="font-bold text-lg">Suara</span></div>
+                    <i data-lucide="chevron-right" class="text-green-300"></i>
+                </div>
+                <div onclick="renderPendampingSettings()" class="flex items-center justify-between p-5 bg-purple-50 rounded-3xl cursor-pointer border-2 border-transparent hover:border-purple-200">
+                    <div class="flex items-center gap-4"><div class="bg-white p-3 rounded-2xl text-purple-500 shadow-sm"><i data-lucide="users"></i></div><span class="font-bold text-lg">Pendamping</span></div>
+                    <i data-lucide="chevron-right" class="text-purple-300"></i>
+                </div>`;
+            lucide.createIcons();
         }
 
-        function resetOrder() { STATE.orderStep=[]; render(); }
-
-        function answerQuiz(c) {
-            if(c) {
-                playSfx('correct');
-                if(STATE.quizIndex < LEVEL_3_QUIZ.length-1) { STATE.quizIndex++; updateAvatar('happy', 'Benar.'); render(); }
-                else { STATE.score+=20; completeLevel(3); setTimeout(showVictory, 500); }
-            } else { playSfx('wrong'); updateAvatar('sad', 'Salah.'); }
+        function renderTampilanSettings() {
+            const content = document.getElementById('settings-content');
+            document.getElementById('settings-title').innerText = "Tampilan";
+            content.innerHTML = `<button onclick="renderSettingsMenu()" class="text-sm font-bold text-gray-400 flex items-center gap-1 mb-4"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali</button>
+                <div class="space-y-6">
+                    <div><p class="font-black text-xs uppercase text-gray-400 mb-2">Ukuran Teks</p>
+                    <div class="flex gap-2">${['small','medium','large'].map(s => `<button onclick="updateTextSize('${s}')" class="flex-1 py-2 rounded-xl border-2 ${STATE.textSize === s ? 'bg-blue-500 text-white border-blue-600' : 'bg-white border-gray-100 text-gray-400'} text-xs font-bold capitalize">${s === 'small' ? 'Kecil' : s === 'medium' ? 'Sedang' : 'Besar'}</button>`).join('')}</div></div>
+                    <div><p class="font-black text-xs uppercase text-gray-400 mb-2">Warna Layar</p>
+                    <div class="space-y-2"><button onclick="updateColor('normal')" class="w-full py-3 rounded-xl border-2 bg-white text-black text-xs font-bold ${STATE.colorMode==='normal'?'border-blue-500':''}">Normal (Putih)</button>
+                    <button onclick="updateColor('high')" class="w-full py-3 rounded-xl border-2 bg-black text-yellow-400 text-xs font-bold border-yellow-400 ${STATE.colorMode==='high'?'ring-2 ring-blue-500':''}">Kontras Tinggi</button>
+                    <button onclick="updateColor('soft')" class="w-full py-3 rounded-xl border-2 bg-[#F5E6D3] text-[#5D4037] text-xs font-bold ${STATE.colorMode==='soft'?'border-blue-500':''}">Latar Lembut</button></div></div></div>`;
+            lucide.createIcons();
         }
 
-        let activeDragItem = null, cloneItem = null, touchOffsetX = 0, touchOffsetY = 0;
+        function renderSuaraSettings() {
+            const content = document.getElementById('settings-content');
+            document.getElementById('settings-title').innerText = "Suara";
+            content.innerHTML = `<button onclick="renderSettingsMenu()" class="text-sm font-bold text-gray-400 flex items-center gap-1 mb-4"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali</button>
+                <div class="space-y-6"><div class="flex items-center justify-between p-3 bg-gray-50 rounded-2xl"><span class="font-bold text-sm">Narasi Suara Perempuan</span>
+                <button onclick="STATE.narration = !STATE.narration; renderSuaraSettings()" class="w-12 h-6 rounded-full relative transition-colors ${STATE.narration ? 'bg-green-500' : 'bg-gray-300'}"><div class="absolute w-4 h-4 bg-white rounded-full top-1 transition-all ${STATE.narration ? 'left-7' : 'left-1'}"></div></button></div>
+                <div><p class="font-black text-xs uppercase text-gray-400 mb-2">Kecepatan Bicara</p><div class="flex gap-2"><button onclick="STATE.voiceSpeed = 'slow'; renderSuaraSettings()" class="flex-1 py-2 rounded-xl border-2 ${STATE.voiceSpeed === 'slow' ? 'bg-green-500 text-white' : 'bg-white'} text-xs font-bold">Lambat</button>
+                <button onclick="STATE.voiceSpeed = 'normal'; renderSuaraSettings()" class="flex-1 py-2 rounded-xl border-2 ${STATE.voiceSpeed === 'normal' ? 'bg-green-500 text-white' : 'bg-white'} text-xs font-bold">Normal</button></div></div></div>`;
+            lucide.createIcons();
+        }
+
+        function renderPendampingSettings() {
+            const content = document.getElementById('settings-content');
+            document.getElementById('settings-title').innerText = "Pendamping";
+            content.innerHTML = `<button onclick="renderSettingsMenu()" class="text-sm font-bold text-gray-400 flex items-center gap-1 mb-4"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali</button>
+                <div class="space-y-4"><div class="bg-purple-50 p-5 rounded-3xl border-2 border-purple-100 text-sm"><p class="font-black uppercase text-purple-400 mb-2">Progres Anak</p><p>Tingkat Selesai: <b>${STATE.completedLevels.length}/4</b></p><p>Total Skor: <b>${STATE.score}</b></p></div>
+                <button onclick="if(confirm('Hapus semua progres?')) { STATE.completedLevels=[]; STATE.score=0; renderPendampingSettings(); }" class="w-full py-4 bg-white border-2 border-red-100 rounded-3xl text-red-500 font-bold text-sm shadow-sm active:scale-95">Reset Permainan</button></div>`;
+            lucide.createIcons();
+        }
+
+        function updateTextSize(s) { STATE.textSize = s; document.body.className = `h-screen w-screen overflow-hidden flex justify-center text-size-${s}`; renderTampilanSettings(); }
+        function updateColor(m) { STATE.colorMode = m; document.body.classList.remove('mode-high-contrast', 'mode-soft'); if(m === 'high') document.body.classList.add('mode-high-contrast'); if(m === 'soft') document.body.classList.add('mode-soft'); renderTampilanSettings(); }
+        function toggleAvatar() { STATE.isAvatarVisible = !STATE.isAvatarVisible; document.getElementById('avatar-container').classList.toggle('avatar-hidden', !STATE.isAvatarVisible); document.getElementById('avatar-arrow').setAttribute('data-lucide', STATE.isAvatarVisible ? 'chevron-left' : 'chevron-right'); lucide.createIcons(); }
+
+        // --- Drag & Drop Simulation ---
         function initDragAndDrop() {
             const items = document.querySelectorAll('.draggable-item');
-            const zone = document.getElementById('drop-zone');
-            items.forEach(item => {
-                item.addEventListener('touchstart', handleTouchStart, {passive: false});
-                item.addEventListener('touchmove', handleTouchMove, {passive: false});
-                item.addEventListener('touchend', handleTouchEnd);
-            });
+            items.forEach(item => { item.ontouchstart = (e) => handleDragStart(e, item, true); item.onmousedown = (e) => handleDragStart(e, item, false); });
         }
 
-        function handleTouchStart(e) {
-            e.preventDefault(); activeDragItem = e.currentTarget; cloneItem = activeDragItem.cloneNode(true);
-            cloneItem.classList.add('dragging-clone'); document.body.appendChild(cloneItem);
-            const rect = activeDragItem.getBoundingClientRect();
-            touchOffsetX = e.touches[0].clientX - rect.left; touchOffsetY = e.touches[0].clientY - rect.top;
-            cloneItem.style.left = (e.touches[0].clientX - touchOffsetX) + 'px'; cloneItem.style.top = (e.touches[0].clientY - touchOffsetY) + 'px';
-            activeDragItem.style.opacity = '0.3';
+        function handleDragStart(e, item, isTouch) {
+            const clone = item.cloneNode(true); clone.classList.add('dragging-clone'); document.body.appendChild(clone);
+            const move = (ev) => {
+                const cx = isTouch ? ev.touches[0].clientX : ev.clientX; const cy = isTouch ? ev.touches[0].clientY : ev.clientY;
+                clone.style.left = (cx - 30) + 'px'; clone.style.top = (cy - 30) + 'px';
+                const rect = document.getElementById('drop-zone').getBoundingClientRect();
+                document.getElementById('drop-zone').classList.toggle('drop-zone-active', cx > rect.left && cx < rect.right && cy > rect.top && cy < rect.bottom);
+            };
+            const end = (ev) => {
+                const cx = isTouch ? ev.changedTouches[0].clientX : (ev.clientX || 0); const cy = isTouch ? ev.changedTouches[0].clientY : (ev.clientY || 0);
+                const rect = document.getElementById('drop-zone').getBoundingClientRect();
+                if(cx > rect.left && cx < rect.right && cy > rect.top && cy < rect.bottom) handleDropSimulation(item.dataset.id);
+                clone.remove(); document.getElementById('drop-zone').classList.remove('drop-zone-active');
+                window.removeEventListener(isTouch ? 'touchmove' : 'mousemove', move); window.removeEventListener(isTouch ? 'touchend' : 'mouseup', end);
+            };
+            window.addEventListener(isTouch ? 'touchmove' : 'mousemove', move); window.addEventListener(isTouch ? 'touchend' : 'mouseup', end);
         }
 
-        function handleTouchMove(e) {
-            if(!activeDragItem) return; e.preventDefault();
-            cloneItem.style.left = (e.touches[0].clientX - touchOffsetX) + 'px'; cloneItem.style.top = (e.touches[0].clientY - touchOffsetY) + 'px';
-            const zone = document.getElementById('drop-zone').getBoundingClientRect();
-            const touch = e.touches[0];
-            document.getElementById('drop-zone').classList.toggle('drop-zone-active', touch.clientX >= zone.left && touch.clientX <= zone.right && touch.clientY >= zone.top && touch.clientY <= zone.bottom);
+        function handleDropSimulation(id) {
+            const order = ['cuci', 'air', 'tisu_steril', 'betadine', 'kasa_steril', 'plester'];
+            if(id === order[STATE.woundState]) { STATE.woundState++; if(STATE.woundState === 6) { STATE.score += 25; complete(4); } else render(); } 
+            else updateAvatarUI("Belum pas untuk langkah ini, ayo coba gunakan alat yang lain!");
         }
 
-        function handleTouchEnd(e) {
-            if(!activeDragItem) return;
-            const zoneRect = document.getElementById('drop-zone').getBoundingClientRect();
-            const cloneRect = cloneItem.getBoundingClientRect();
-            if(cloneRect.left + cloneRect.width/2 >= zoneRect.left && cloneRect.left + cloneRect.width/2 <= zoneRect.right && cloneRect.top + cloneRect.height/2 >= zoneRect.top && cloneRect.top + cloneRect.height/2 <= zoneRect.bottom) handleDropLogic(activeDragItem.dataset.id);
-            cloneItem.remove(); activeDragItem.style.opacity = '1'; activeDragItem = null; cloneItem = null;
-            document.getElementById('drop-zone').classList.remove('drop-zone-active');
+        function renderFinalScore(c) {
+            const starCount = STATE.completedLevels.length;
+            c.innerHTML = `<div class="flex flex-col items-center text-center"><div class="relative mb-8"><i data-lucide="award" class="w-24 h-24 text-orange-400 animate-bounce-slow drop-shadow-xl"></i></div><h1 class="text-4xl font-black mb-2 uppercase text-[#1F2937]">Misi Selesai!</h1><div class="flex gap-3 mb-10 bg-white p-5 rounded-[3rem] shadow-xl border-4 border-white">${Array.from({length: 4}, (_, i) => `<i data-lucide="star" class="w-12 h-12 ${i<starCount ? 'text-orange-400 fill-current animate-star' : 'text-gray-200'}"></i>`).join('')}</div><div class="bg-white p-10 rounded-[4rem] shadow-2xl w-full max-w-xs mb-10 border-8 border-white"><span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Skor Akhir</span><div class="text-7xl font-black text-[#38BDF8]">${STATE.score}</div></div><button onclick="location.reload()" class="w-full bg-[#38BDF8] text-white py-6 rounded-[2.5rem] font-black uppercase shadow-xl border-b-8 border-blue-700 active:translate-y-2 text-xl">Main Lagi</button></div>`;
         }
 
-        function handleDropLogic(toolId) {
-            const s = STATE.woundState;
-            const order = ['sabun', 'air', 'tisu', 'obat', 'kasa', 'plester'];
-            if (toolId === order[s]) {
-                STATE.woundState++; playSfx('correct'); updateAvatar('happy', 'Benar.');
-                if (STATE.woundState === 6) { STATE.score += 35; completeLevel(4); setTimeout(showVictory, 500); } 
-                else render();
-            } else { playSfx('wrong'); updateAvatar('sad', 'Urutan salah.'); }
-        }
-
-        function renderReflection(container) {
-            container.innerHTML = `<h2 class="text-2xl font-bold mb-6 text-center text-[#1F2937]">Bagaimana perasaan Anda?</h2><div class="grid grid-cols-2 gap-6 w-full mb-10"><button onclick="endGame()" class="bg-[#A7F3D0]/40 p-8 rounded-[2.5rem] flex flex-col items-center gap-4 border-2 border-[#A7F3D0] active:scale-95 shadow-sm"><i data-lucide="smile" class="w-16 h-16 text-orange-400"></i><span class="font-bold text-[#1F2937] text-lg">Senang</span></button><button onclick="endGame()" class="bg-[#38BDF8]/20 p-8 rounded-[2.5rem] flex flex-col items-center gap-4 border-2 border-[#38BDF8] active:scale-95 shadow-sm"><i data-lucide="thumbs-up" class="w-16 h-16 text-[#38BDF8]"></i><span class="font-bold text-[#1F2937] text-lg">Bangga</span></button></div>`;
-            updateAvatar('happy', 'Wah, Anda berhasil merawat luka dengan sangat baik!');
-        }
-
-        function endGame() { STATE.screen = 'final_score'; render(); }
-        function renderFinalScore(container) {
-            playSfx('victory');
-            const levelCount = STATE.completedLevels.length;
-            const starsHtml = Array.from({ length: 4 }, (_, i) => `<i data-lucide="star" class="w-10 h-10 ${i < levelCount ? 'text-orange-400 fill-current animate-star' : 'text-gray-200'} ml-1" style="animation-delay: ${i * 0.2}s"></i>`).join('');
-            container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-center"><div class="relative mb-6"><i data-lucide="trophy" class="w-28 h-28 text-orange-400 animate-bounce-slow"></i></div><div class="flex justify-center mb-6 bg-white/50 p-4 rounded-full border-2 border-[#A7F3D0] shadow-inner">${starsHtml}</div><h1 class="text-4xl font-black text-[#1F2937] uppercase mb-2">Luar Biasa!</h1><p class="text-[#6B7280] mb-6 font-bold uppercase tracking-widest text-sm">Laporan Akhir</p><div class="bg-white p-8 rounded-[3rem] shadow-xl border-4 border-white mb-8 w-full max-w-xs"><div class="mb-6 border-b pb-6 border-gray-100"><span class="text-xs font-bold text-[#6B7280] uppercase tracking-widest">Total Skor</span><div class="text-6xl font-black text-[#38BDF8] mt-2">${STATE.score}</div></div><div class="text-left"><span class="text-xs font-bold text-[#6B7280] uppercase tracking-widest">Kemajuan</span><div class="w-full h-5 bg-gray-100 rounded-full mt-3 overflow-hidden border"><div class="h-full bg-[#A7F3D0] progress-striped" style="width: ${(levelCount/4)*100}%"></div></div><p class="text-sm text-center mt-3 font-bold text-[#6B7280]">${levelCount} dari 4 Tingkat Selesai</p></div></div><button onclick="location.reload()" class="w-full bg-[#38BDF8] text-white font-black py-5 rounded-[2rem] shadow-lg active:scale-95 text-xl border-b-4 border-blue-700 uppercase">Mainkan Lagi</button></div>`;
-            updateAvatar('excited', `Hebat! Anda mendapatkan ${levelCount} bintang.`);
-        }
+        // Inisialisasi awal
         render();
     </script>
 </body>
 </html>
-
-
