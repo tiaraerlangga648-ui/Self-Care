@@ -135,13 +135,13 @@
             <div class="p-5 border-b border-orange-50 flex justify-between items-center bg-[#A7F3D0]/30">
                 <div class="flex items-center gap-2">
                     <i data-lucide="book-open" class="text-[#1F2937]"></i>
-                    <h2 class="font-black text-[#1F2937] text-lg uppercase">Buku Panduan</h2>
+                    <h2 class="font-black text-[#1F2937] text-lg uppercase">Petunjuk Penggunaan</h2>
                 </div>
                 <button onclick="closePanduan()" class="bg-white p-1 rounded-full text-[#6B7280] hover:text-red-500 shadow-sm"><i data-lucide="x"></i></button>
             </div>
             <div class="p-6 overflow-y-auto no-scrollbar text-sm text-[#1F2937] leading-relaxed">
                 <div class="text-center mb-6">
-                    <h1 class="text-xl font-black uppercase text-[#1F2937]">BUKU PENGGUNAAN APLIKASI</h1>
+                    <h1 class="text-xl font-black uppercase text-[#1F2937]">PETUNJUK PENGGUNAAN APLIKASI</h1>
                     <p class="text-blue-500 font-bold">Gamifikasi Pembelajaran Self Care (Perawatan Luka)</p>
                     <p class="text-[10px] text-gray-400 italic">Untuk Orang Tua Murid dan Guru/Terapis</p>
                 </div>
@@ -149,7 +149,7 @@
                 <div class="guide-section">
                     <h2 class="guide-h2"><span class="bg-[#A7F3D0] w-6 h-6 rounded-full flex items-center justify-center text-xs">A</span> Pendahuluan</h2>
                     <p class="text-xs">Aplikasi Gamifikasi Pembelajaran Self Care (Perawatan Luka) dirancang untuk membantu peserta didik disabilitas intelektual ringan mempelajari perawatan luka secara aman, mandiri, dan menyenangkan melalui permainan edukatif berbasis gamifikasi dan model pembelajaran kontekstual.</p>
-                    <p class="text-xs mt-2">Buku ini menjadi panduan singkat bagi orang tua dan guru/terapis dalam mendampingi penggunaan aplikasi.</p>
+                    <p class="text-xs mt-2">Petunjuk ini menjadi panduan singkat bagi orang tua dan guru/terapis dalam mendampingi penggunaan aplikasi.</p>
                 </div>
 
                 <div class="guide-section">
@@ -164,9 +164,9 @@
                 <div class="guide-section">
                     <h2 class="guide-h2"><span class="bg-[#A7F3D0] w-6 h-6 rounded-full flex items-center justify-center text-xs">C</span> Tujuan Penggunaan</h2>
                     <ul class="list-disc pl-5 text-xs space-y-1">
-                        <li>Memahami langkah dasar perawatan luka</li>
-                        <li>Meningkatkan kemandirian self care</li>
-                        <li>Meningkatkan motivasi belajar</li>
+                        <li>Peserta didik mengenal 5 alat perawatan luka</li>
+                        <li>Peserta didik mengenal 6 urutan cara merawat luka</li>
+                        <li>Peserta didik dapat menunjukkan urutan perawatan luka dan alat di gunakan</li>
                     </ul>
                 </div>
 
@@ -445,7 +445,7 @@
                 </div>
                 <div class="mt-8 p-5 bg-white/50 rounded-3xl border-2 border-orange-100 flex flex-col items-center max-w-sm mx-auto">
                     <p class="text-xs font-bold text-gray-400 uppercase mb-3">Butuh Bantuan?</p>
-                    <button onclick="openPanduan()" class="flex items-center gap-2 bg-white px-6 py-3 rounded-2xl shadow-sm border border-orange-200 text-orange-400 font-bold active:scale-95 transition-all"><i data-lucide="book-open" class="w-5 h-5"></i> Buku Panduan</button>
+                    <button onclick="openPanduan()" class="flex items-center gap-2 bg-white px-6 py-3 rounded-2xl shadow-sm border border-orange-200 text-orange-400 font-bold active:scale-95 transition-all"><i data-lucide="book-open" class="w-5 h-5"></i> Petunjuk Penggunaan</button>
                 </div>`;
         }
 
@@ -453,7 +453,7 @@
             c.innerHTML = `
                 <h2 class="font-black text-center mb-4 uppercase text-[#1F2937] text-xl">6 Langkah Perawatan</h2>
                 <div class="hd-frame rounded-[2.5rem] aspect-video w-full max-w-3xl mx-auto overflow-hidden mb-8 bg-gray-900 flex items-center justify-center">
-                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/p7nKQH8sAfw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/tCQ8XfqOjf4?si=Ye6IpEfDZfk0FAmg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pb-6">${LEVEL_2_STEPS.map((s,i) => `
                     <div class="bg-white p-4 rounded-2xl flex items-center gap-4 text-sm border-2 border-orange-50 shadow-sm transition-transform hover:scale-[1.02]">
@@ -470,7 +470,7 @@
 
         function renderLevelSelect(c) {
             // Label khusus untuk setiap level
-            const levelLabels = ["PILIH ALAT", "URUTAN", "KUIS", "SIMULASI"];
+            const levelLabels = ["PILIH ALAT", "PILIH URUTAN", "KUIS", "SIMULASI"];
             
             c.innerHTML = `
                 <h2 class="font-black mb-8 text-center uppercase tracking-widest text-gray-400 text-sm">Pilih Level</h2>
@@ -705,5 +705,6 @@
     </script>
 </body>
 </html>
+
 
 
